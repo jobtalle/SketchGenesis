@@ -3,7 +3,7 @@ const Agent = function(position) {
 
     this.getPosition = () => position;
 
-    this.getPressure = () => 10;
+    this.getPressure = () => 30;
 
     this.update = (timeStep, grid) => {
         velocity.add(grid.get(position.x, position.y).multiply(timeStep * 50));
@@ -18,7 +18,7 @@ const Agent = function(position) {
         context.translate(position.x, position.y);
         context.strokeStyle = "white";
         context.beginPath();
-        context.arc(0, 0, 16, 0, Math.PI + Math.PI);
+        context.arc(0, 0, 24, 0, Math.PI + Math.PI);
         context.stroke();
         context.restore();
     };

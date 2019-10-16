@@ -2,7 +2,11 @@ const Grid = function(width, height) {
     const xCells = Math.ceil(width / Grid.RESOLUTION) + 1;
     const yCells = Math.ceil(height / Grid.RESOLUTION) + 1;
     const cells = new Array(xCells * yCells);
+    const weights = new Array(xCells * yCells);
     const vector = new Vector(0, 0);
+
+    for (let i = 0; i < weights.length; ++i)
+        weights[i] = 1;
 
     const clear = () => {
         for (let i = 0; i < cells.length; ++i)
@@ -14,7 +18,7 @@ const Grid = function(width, height) {
     };
 
     const get = (x, y) => {
-        return cells[x + y * xCells];
+        return cells[x + y * xCells] * weights[x + y * xCells];
     };
 
     this.get = (x, y) => {
