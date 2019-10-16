@@ -9,6 +9,13 @@ const resize = () => {
     canvas.width = wrapper.offsetWidth;
     canvas.height = wrapper.offsetHeight;
     pressure = new Pressure(canvas.width, canvas.height);
+    canvas.addEventListener("click", event => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        pressure.spawn(x, y);
+    });
 };
 
 const update = timeStep => {
