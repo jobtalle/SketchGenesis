@@ -1,60 +1,66 @@
 const Grid = function(width, height) {
+    const Cell = function() {
+        this.agents = [];
+        this.agentCount = 0;
+    };
+
     const xCells = Math.ceil(width / Grid.RESOLUTION) + 1;
     const yCells = Math.ceil(height / Grid.RESOLUTION) + 1;
     const cells = new Array(xCells * yCells);
-    const weights = new Array(xCells * yCells);
-    const vector = new Vector(0, 0);
 
-    for (let i = 0; i < weights.length; ++i)
-        weights[i] = 1;
+    let connections = 0;
+
+    for (let i = 0; i < cells.length; ++i)
+        cells[i] = new Cell();
 
     const clear = () => {
-        for (let i = 0; i < cells.length; ++i)
-            cells[i] = 0;
-    };
-
-    const add = (x, y, value) => {
-        cells[x + y * xCells] += value;
+        for (let i = 0; i < cells.length; ++i) {
+            cells[i].agentCount = 0;
+        }
     };
 
     const get = (x, y) => {
-        return cells[x + y * xCells] * weights[x + y * xCells];
+        return cells[x + y * xCells];
     };
 
-    this.get = (x, y) => {
-        const ix = Math.floor(x * Grid.RESOLUTION_INVERSE);
-        const iy = Math.floor(y * Grid.RESOLUTION_INVERSE);
-        const dx = x - ix * Grid.RESOLUTION;
-        const dy = y - iy * Grid.RESOLUTION;
-        const fx = dx * Grid.RESOLUTION_INVERSE;
-        const fy = dy * Grid.RESOLUTION_INVERSE;
-
-        const pLeft = get(ix, iy) * fy + get(ix, iy + 1) * (1 - fy);
-        const pRight = get(ix + 1, iy) * fy + get(ix + 1, iy + 1) * (1 - fy);
-        const pTop = get(ix, iy) * fx + get(ix + 1, iy) * (1 - fx);
-        const pBottom = get(ix, iy + 1) * fx + get(ix + 1, iy + 1) * (1 - fx);
-
-        vector.x = pLeft - pRight;
-        vector.y = pTop - pBottom;
-
-        return vector;
-    };
-
-    this.populate = agents => {
+    const populate = agents => {
         clear();
 
         for (const agent of agents) {
-            const ix = Math.floor(agent.getPosition().x * Grid.RESOLUTION_INVERSE);
-            const iy = Math.floor(agent.getPosition().y * Grid.RESOLUTION_INVERSE);
-            const dx = agent.getPosition().x - ix * Grid.RESOLUTION;
-            const dy = agent.getPosition().y - iy * Grid.RESOLUTION;
-            const fx = dx * Grid.RESOLUTION_INVERSE;
-            const fy = dy * Grid.RESOLUTION_INVERSE;
+            const x = Math.floor(agent.getPosition().x * Grid.RESOLUTION_INVERSE);
+            const y = Math.floor(agent.getPosition().y * Grid.RESOLUTION_INVERSE);
+            const cell = cells[x + y * xCells];
 
-            add(ix, iy, (1 - fx) * (1 - fy) * agent.getPressure());
-            add(ix + 1, iy, fx * (1 - fy) * agent.getPressure());
-            add(ix, iy + 1, (1 - fx) * fy * agent.getPressure());
-            add(ix + 1, iy + 1, fx * fy * agent.getPressure());
+            cell.agents[cell.agentCount++] = agent;
+        }
+    };
+
+    this.update = (timeStep, agents) => {
+        populate(agents);
+
+        for (let y = 0; y < yCells - 1; ++y) for (let x = 0; x < xCells - 1; ++x) {
+            const cell = get(x, y);
+            const right = get(x + 1, y);
+            const leftBottom = get(x - 1, y + 1);
+            const bottom = get(x, y + 1);
+            const rightBottom = get(x + 1, y + 1);
+
+            for (let self = 0; self < cell.agentCount; ++self) {
+                for (let other = self + 1; other < cell.agentCount; ++other)
+                    cell.agents[self].collide(cell.agents[other], timeStep);
+
+                for (let other = 0; other < right.agentCount; ++other)
+                    cell.agents[self].collide(right.agents[other], timeStep);
+
+                for (let other = 0; other < leftBottom.agentCount; ++other)
+                    cell.agents[self].collide(leftBottom.agents[other], timeStep);
+
+                for (let other = 0; other < bottom.agentCount; ++other)
+                    cell.agents[self].collide(bottom.agents[other], timeStep);
+
+                for (let other = 0; other < rightBottom.agentCount; ++other)
+                    cell.agents[self].collide(rightBottom.agents[other], timeStep);
+            }
         }
     };
 
@@ -62,19 +68,31 @@ const Grid = function(width, height) {
         context.fillStyle = "gray";
         context.strokeStyle = "white";
 
-        for (let y = 0; y < yCells; ++y) for (let x = 0; x < xCells; ++x) {
-            const px = x * Grid.RESOLUTION;
-            const py = y * Grid.RESOLUTION;
-            const pressure = get(x, y);
+        for (let x = 0; x < xCells; ++x) {
+            context.beginPath();
+            context.moveTo(x * Grid.RESOLUTION, 0);
+            context.lineTo(x * Grid.RESOLUTION, yCells * Grid.RESOLUTION);
+            context.stroke();
+        }
 
-            if (pressure !== 0) {
-                context.beginPath();
-                context.arc(px, py, pressure, 0, Math.PI + Math.PI);
-                context.fill();
-            }
+        for (let y = 0; y < yCells; ++y) {
+            context.beginPath();
+            context.moveTo(0, y * Grid.RESOLUTION);
+            context.lineTo(xCells * Grid.RESOLUTION, y * Grid.RESOLUTION);
+            context.stroke();
+        }
+
+        for (let y = 0; y < yCells; ++y) for (let x = 0; x < xCells; ++x) {
+            if (get(x, y).agentCount === 0)
+                continue;
+
+            context.fillStyle = "blue";
+            context.beginPath();
+            context.rect(x * Grid.RESOLUTION + 1, y * Grid.RESOLUTION + 1, Grid.RESOLUTION - 2, Grid.RESOLUTION - 2);
+            context.fill();
         }
     };
 };
 
-Grid.RESOLUTION = 32;
+Grid.RESOLUTION = 48;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;

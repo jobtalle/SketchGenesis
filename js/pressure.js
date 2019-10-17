@@ -7,15 +7,15 @@ const Pressure = function(width, height) {
     };
 
     this.update = timeStep => {
-        grid.populate(agents);
+        grid.update(timeStep, agents);
 
         for (let i = agents.length; i-- > 0;) {
             agents[i].update(timeStep, grid);
 
-            if (agents[i].getPosition().x < 0 ||
-                agents[i].getPosition().y < 0 ||
-                agents[i].getPosition().x > width ||
-                agents[i].getPosition().y > height) {
+            if (agents[i].getPosition().x < Grid.RESOLUTION ||
+                agents[i].getPosition().y < Grid.RESOLUTION ||
+                agents[i].getPosition().x > width - Grid.RESOLUTION ||
+                agents[i].getPosition().y > height - Grid.RESOLUTION) {
                 agents.splice(i, 1);
             }
         }
