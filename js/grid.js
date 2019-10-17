@@ -8,8 +8,6 @@ const Grid = function(width, height) {
     const yCells = Math.ceil(height / Grid.RESOLUTION) + 1;
     const cells = new Array(xCells * yCells);
 
-    let connections = 0;
-
     for (let i = 0; i < cells.length; ++i)
         cells[i] = new Cell();
 
@@ -94,5 +92,5 @@ const Grid = function(width, height) {
     };
 };
 
-Grid.RESOLUTION = 48;
+Grid.RESOLUTION = 64;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;
