@@ -19,12 +19,11 @@ const resize = () => {
 };
 
 const update = timeStep => {
-    pressure.update(Math.min(timeStep, TIME_STEP_MAX));
-
     const context = canvas.getContext("2d");
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    pressure.update(Math.min(timeStep, TIME_STEP_MAX));
     pressure.draw(context);
 };
 

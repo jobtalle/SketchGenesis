@@ -1,19 +1,21 @@
 const Agent = function(position) {
     this.velocity = new Vector(0, 0);
-    this.radius = 32;
-    this.attraction = 10;
+    this.radius = 24;
+    this.attraction = 8;
+    this.position = position;
 
     this.collide = (agent, timeStep) => {
-        const dx = position.x - agent.getPosition().x;
-        const dy = position.y - agent.getPosition().y;
+        const dx = this.position.x - agent.position.x;
+        const dy = this.position.y - agent.position.y;
         const distanceSquared = dx * dx + dy * dy;
+        const radii = agent.radius + this.radius;
 
-        if (distanceSquared < (agent.radius + this.radius) * (agent.radius + this.radius)) {
-            const force = 1;
-            let spacing = Math.sqrt(distanceSquared) - agent.radius - this.radius + this.attraction;
+        if (distanceSquared < radii * radii) {
+            const force = 2;
+            let spacing = Math.sqrt(distanceSquared) - radii + this.attraction;
 
             if (spacing < 0)
-                spacing = -Math.pow(-spacing, 1.3);
+                spacing = -Math.pow(-spacing, Agent.REPULSION_POWER);
 
             const vx = dx * spacing * timeStep * force;
             const vy = dy * spacing * timeStep * force;
@@ -25,13 +27,10 @@ const Agent = function(position) {
         }
     };
 
-    this.getPosition = () => position;
-
     this.update = timeStep => {
-        this.velocity.multiply(0.93);
-
-        position.x += this.velocity.x * timeStep;
-        position.y += this.velocity.y * timeStep;
+        this.velocity.multiply(0.94);
+        this.position.x += this.velocity.x * timeStep;
+        this.position.y += this.velocity.y * timeStep;
     };
 
     this.draw = context => {
@@ -49,4 +48,4 @@ const Agent = function(position) {
     };
 };
 
-Agent.SEPARATION_SPEED = 50;
+Agent.REPULSION_POWER = 1.4;

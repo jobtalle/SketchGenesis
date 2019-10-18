@@ -12,10 +12,10 @@ const Pressure = function(width, height) {
         for (let i = agents.length; i-- > 0;) {
             agents[i].update(timeStep);
 
-            if (agents[i].getPosition().x < 0 ||
-                agents[i].getPosition().y < 0 ||
-                agents[i].getPosition().x > width ||
-                agents[i].getPosition().y > height) {
+            if (agents[i].position.x < 0 ||
+                agents[i].position.y < 0 ||
+                agents[i].position.x > width ||
+                agents[i].position.y > height) {
                 agents.splice(i, 1);
             }
         }
