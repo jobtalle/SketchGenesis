@@ -14,7 +14,8 @@ const resize = () => {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        pressure.spawn(x, y);
+        for (let i = 0; i < 30; ++i)
+            pressure.spawn(x + Math.random(), y + Math.random());
     });
 };
 

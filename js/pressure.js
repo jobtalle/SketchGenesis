@@ -22,7 +22,7 @@ const Pressure = function(width, height) {
     };
 
     this.draw = context => {
-        grid.draw(context);
+        //grid.draw(context);
 
         for (const agent of agents)
             agent.draw(context);

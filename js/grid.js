@@ -13,9 +13,8 @@ const Grid = function(width, height) {
         cells[i] = new Cell();
 
     const clear = () => {
-        for (let i = 0; i < cells.length; ++i) {
+        for (let i = 0; i < cells.length; ++i)
             cells[i].agentCount = 0;
-        }
     };
 
     const get = (x, y) => {
@@ -104,5 +103,5 @@ const Grid = function(width, height) {
     };
 };
 
-Grid.RESOLUTION = 64;
+Grid.RESOLUTION = 48;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;
