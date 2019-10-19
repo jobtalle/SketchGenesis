@@ -103,5 +103,5 @@ const Grid = function(width, height) {
     };
 };
 
-Grid.RESOLUTION = 48;
+Grid.RESOLUTION = Agent.RADIUS * 2;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;

@@ -1,9 +1,7 @@
-const Agent = function(position, divisions) {
-    let divisionTime = divisions === 1 ? -1 : Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
+const Agent = function(position, divisions, parent = null) {
+    let divisionTime = Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
 
     this.velocity = new Vector(0, 0);
-    this.radius = 24;
-    this.attraction = 8;
     this.position = position;
 
     const split = spawn => {
@@ -12,26 +10,28 @@ const Agent = function(position, divisions) {
             Math.cos(direction) * Agent.DIVISION_OFFSET,
             Math.sin(direction) * Agent.DIVISION_OFFSET);
 
+        parent = null;
+
         spawn(
             this.position.x,
             this.position.y + 0.5,
-            new Agent(position.copy().add(offset), divisions));
+            new Agent(position.copy().add(offset), divisions, this));
     };
 
     this.collide = (agent, timeStep) => {
         const dx = this.position.x - agent.position.x;
         const dy = this.position.y - agent.position.y;
         const distanceSquared = dx * dx + dy * dy;
-        const radii = agent.radius + this.radius;
+        const radii = Agent.RADIUS + Agent.RADIUS;
 
         if (distanceSquared < radii * radii) {
-            let spacing = Math.sqrt(distanceSquared) - radii + this.attraction;
+            let spacing = Math.sqrt(distanceSquared) - radii + Agent.ATTRACTION_RADIUS;
 
             if (spacing < 0)
                 spacing = -Math.pow(-spacing, Agent.REPULSION_POWER);
 
-            const vx = dx * spacing * Agent.ATTRACTION_MULTIPLIER * timeStep;
-            const vy = dy * spacing * Agent.ATTRACTION_MULTIPLIER * timeStep;
+            const vx = dx * spacing * Agent.FORCE_MULTIPLIER * timeStep;
+            const vy = dy * spacing * Agent.FORCE_MULTIPLIER * timeStep;
 
             this.velocity.x -= vx;
             this.velocity.y -= vy;
@@ -46,12 +46,34 @@ const Agent = function(position, divisions) {
         this.position.y += this.velocity.y * timeStep;
 
         if (divisionTime > 0 && (divisionTime -= timeStep) < 0) {
-            divisions = Math.ceil(divisions * 0.5);
+            if (divisions === 1)
+                parent = null;
+            else {
+                divisions = Math.ceil(divisions * 0.5);
 
-            split(spawn);
+                split(spawn);
 
-            if (divisions !== 1)
-                divisionTime = Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
+                if (divisions !== 1)
+                    divisionTime = Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
+            }
+        }
+
+        if (parent !== null) {
+            const dx = parent.position.x - this.position.x;
+            const dy = parent.position.y - this.position.y;
+            const dSquared = dx * dx + dy * dy;
+            const dMax = Agent.RADIUS + Agent.RADIUS - Agent.ATTRACTION_RADIUS;
+
+            if (dSquared > dMax * dMax) {
+                const d = Math.sqrt(dSquared);
+                const mx = (d - dMax) * dx / d;
+                const my = (d - dMax) * dy / d;
+
+                this.position.x += 0.5 * mx;
+                this.position.y += 0.5 * my;
+                parent.position.x -= 0.5 * mx;
+                parent.position.y -= 0.5 * my;
+            }
         }
     };
 
@@ -60,18 +82,20 @@ const Agent = function(position, divisions) {
         context.translate(position.x, position.y);
         context.strokeStyle = "white";
         context.beginPath();
-        context.arc(0, 0, this.radius, 0, Math.PI + Math.PI);
+        context.arc(0, 0, Agent.RADIUS, 0, Math.PI + Math.PI);
         context.stroke();
         context.fillStyle = "cyan";
         context.beginPath();
-        context.arc(0, 0, this.radius - this.attraction, 0, Math.PI + Math.PI);
+        context.arc(0, 0, Agent.RADIUS - Agent.ATTRACTION_RADIUS, 0, Math.PI + Math.PI);
         context.fill();
         context.restore();
     };
 };
 
+Agent.RADIUS = 24;
+Agent.ATTRACTION_RADIUS = 9;
 Agent.DIVISION_TIME_MIN = 2;
 Agent.DIVISION_TIME_MAX = 8;
 Agent.DIVISION_OFFSET = 1;
-Agent.ATTRACTION_MULTIPLIER = 1.5;
-Agent.REPULSION_POWER = 1.3;
+Agent.FORCE_MULTIPLIER = 1.8;
+Agent.REPULSION_POWER = 1.4;
