@@ -1,4 +1,4 @@
-const Pressure = function(width, height) {
+const Genesis = function(width, height) {
     const grid = new Grid(width, height);
     const agents = [];
 
@@ -14,8 +14,8 @@ const Pressure = function(width, height) {
 
             if (agents[i].position.x < 0 ||
                 agents[i].position.y < 0 ||
-                agents[i].position.x > width ||
-                agents[i].position.y > height) {
+                agents[i].position.x >= width ||
+                agents[i].position.y >= height) {
                 agents.splice(i, 1);
             }
         }
