@@ -1,8 +1,9 @@
 const Agent = function(position, divisions, parent = null) {
-    let divisionTime = Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
+    let divisionTime = Agent.makeDivisionTime(divisions);
 
     this.velocity = new Vector(0, 0);
     this.position = position;
+    this.alive = true;
 
     const split = spawn => {
         const direction = Math.random();
@@ -29,6 +30,8 @@ const Agent = function(position, divisions, parent = null) {
 
             if (spacing < 0)
                 spacing = -Math.pow(-spacing, Agent.REPULSION_POWER);
+            else if (!this.alive || !agent.alive)
+                return;
 
             const vx = dx * spacing * Agent.FORCE_MULTIPLIER * timeStep;
             const vy = dy * spacing * Agent.FORCE_MULTIPLIER * timeStep;
@@ -41,20 +44,29 @@ const Agent = function(position, divisions, parent = null) {
     };
 
     this.update = (timeStep, spawn) => {
-        this.velocity.multiply(0.94);
+        if (this.alive) {
+            this.velocity.x -= this.velocity.x * Agent.DAMPING_ALIVE;
+            this.velocity.y -= this.velocity.y * Agent.DAMPING_ALIVE;
+        }
+        else {
+            this.velocity.x -= this.velocity.x * Agent.DAMPING_DEAD;
+            this.velocity.y -= this.velocity.y * Agent.DAMPING_DEAD;
+        }
+
         this.position.x += this.velocity.x * timeStep;
         this.position.y += this.velocity.y * timeStep;
 
         if (divisionTime > 0 && (divisionTime -= timeStep) < 0) {
-            if (divisions === 1)
+            if (divisions === 1) {
                 parent = null;
+
+                this.alive = false;
+            }
             else {
                 divisions = Math.ceil(divisions * 0.5);
+                divisionTime = Agent.makeDivisionTime(divisions);
 
                 split(spawn);
-
-                if (divisions !== 1)
-                    divisionTime = Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
             }
         }
 
@@ -84,7 +96,12 @@ const Agent = function(position, divisions, parent = null) {
         context.beginPath();
         context.arc(0, 0, Agent.RADIUS, 0, Math.PI + Math.PI);
         context.stroke();
-        context.fillStyle = "cyan";
+
+        if (this.alive)
+            context.fillStyle = "cyan";
+        else
+            context.fillStyle = "black";
+
         context.beginPath();
         context.arc(0, 0, Agent.RADIUS - Agent.ATTRACTION_RADIUS, 0, Math.PI + Math.PI);
         context.fill();
@@ -92,10 +109,20 @@ const Agent = function(position, divisions, parent = null) {
     };
 };
 
+Agent.DAMPING_ALIVE = 0.05;
+Agent.DAMPING_DEAD = 0.02;
 Agent.RADIUS = 24;
 Agent.ATTRACTION_RADIUS = 9;
 Agent.DIVISION_TIME_MIN = 2;
 Agent.DIVISION_TIME_MAX = 8;
+Agent.DEAD_TIME_MIN = 8;
+Agent.DEAD_TIME_MAX = 12;
 Agent.DIVISION_OFFSET = 1;
 Agent.FORCE_MULTIPLIER = 1.8;
 Agent.REPULSION_POWER = 1.4;
+Agent.makeDivisionTime = divisions => {
+    if (divisions > 1)
+        return Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
+    else
+        return Agent.DEAD_TIME_MIN + (Agent.DEAD_TIME_MAX - Agent.DEAD_TIME_MIN) * Math.random();
+};
