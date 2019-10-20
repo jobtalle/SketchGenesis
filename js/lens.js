@@ -1,6 +1,11 @@
 const Lens = function(myr, radius) {
+    const surface = new myr.Surface(radius + radius, radius + radius);
+    const displacement = Lens.makeDisplacement(myr, radius + radius);
+    const shader = Lens.makeShader(myr, surface, displacement, radius + radius);
     const grid = new Grid(radius + radius, radius + radius);
     const flow = new Flow(radius + radius, radius + radius);
+    const x = Math.floor((myr.getWidth() - (radius + radius)) * 0.5);
+    const y = Math.floor((myr.getHeight() - (radius + radius)) * 0.5);
     const agents = [];
     let spawnTime = 0;
 
@@ -83,18 +88,72 @@ const Lens = function(myr, radius) {
     };
 
     this.draw = () => {
+        surface.bind();
+        surface.clear();
+
         grid.draw(myr);
         flow.draw(myr);
 
         for (const agent of agents)
             agent.draw(myr);
+
+        myr.bind();
+
+        shader.draw(x, y);
     };
 
     this.free = () => {
-
+        shader.free();
+        surface.free();
+        displacement.free();
     };
 
     spawn(new Agent(new Myr.Vector(radius, radius), 64));
+};
+
+Lens.makeDisplacement = (myr, diameter) => {
+    const surface = new myr.Surface(diameter, diameter);
+    const shader = new myr.Shader(
+        "void main() {" +
+            "mediump float dx = uv.x - 0.5;" +
+            "mediump float dy = uv.y - 0.5;" +
+            "if (dx * dx + dy * dy > 0.25)" +
+                "color = vec4(0);" +
+            "else {" +
+                "color = vec4(uv.x, uv.y, 0, 1);" +
+            "}" +
+        "}",
+        [],
+        []);
+
+    surface.bind();
+
+    shader.setSize(diameter, diameter);
+    shader.draw(0, 0);
+
+    myr.bind();
+    shader.free();
+
+    return surface;
+};
+
+Lens.makeShader = (myr, surface, displacement) => {
+    const shader = new myr.Shader(
+        "void main() {" +
+            "highp vec4 sourceUV = texture(displacement, uv);" +
+            "mediump vec4 sourcePixel = texture(source, uv).rgba;" +
+            "color = vec4(sourcePixel.rgb, sourcePixel.a * sourceUV.a);" +
+        "}",
+        [
+            "source",
+            "displacement"
+        ],
+        []);
+
+    shader.setSurface("source", surface);
+    shader.setSurface("displacement", displacement);
+
+    return shader;
 };
 
 Lens.SPAWN_TIME = 3;
