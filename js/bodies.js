@@ -56,9 +56,9 @@ Bodies.makeShader = (myr, surface) => {
             "mediump vec4 sourcePixel = texture(source, uv);" +
             "if (sourcePixel.a > 0.0) {" +
                 "color = vec4(0.4, 0.5, 0.7, 0.8);" +
-                "if (sourcePixel.a < 0.15)" +
-                    "color = vec4(0.7, 0.8, 0.9, 0.2);" +
-                "else if (sourcePixel.a > 0.6)" +
+                "if (sourcePixel.a < 0.25)" +
+                    "color = vec4(0.7, 0.8, 0.9, sourcePixel.a);" +
+                "else if (sourcePixel.a > 0.5)" +
                     "color = vec4(0.85);" +
             "}" +
             "else " +
