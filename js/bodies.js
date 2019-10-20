@@ -29,14 +29,13 @@ const Bodies = function(myr, width, height) {
         surface.bind();
         surface.clear();
 
-        //grid.draw(myr);
-        //flow.draw(myr);
-
         for (const agent of agents)
             agent.drawMembrane(myr);
     };
 
     this.draw = () => {
+        grid.draw(myr);
+
         shader.draw(0, 0);
 
         for (const agent of agents)

@@ -81,8 +81,6 @@ const Grid = function(width, height) {
         }
     };
 
-    this.getFlow = () => flow;
-
     this.update = timeStep => {
         flow.update(timeStep);
 
@@ -147,6 +145,8 @@ const Grid = function(width, height) {
                     Grid.RESOLUTION - 2,
                     Grid.RESOLUTION - 2);
             }
+
+        flow.draw(myr);
     };
 };
 
