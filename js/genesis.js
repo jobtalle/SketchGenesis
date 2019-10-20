@@ -1,5 +1,5 @@
-const Genesis = function(width, height) {
-    const lens = new Lens(Math.min(
+const Genesis = function(myr, width, height) {
+    const lens = new Lens(myr, Math.min(
         Math.floor(width * 0.5),
         Math.floor( height * 0.5)));
 
@@ -7,7 +7,11 @@ const Genesis = function(width, height) {
         lens.update(timeStep);
     };
 
-    this.draw = context => {
-        lens.draw(context);
+    this.draw = () => {
+        lens.draw();
+    };
+
+    this.free = () => {
+        lens.free();
     };
 };

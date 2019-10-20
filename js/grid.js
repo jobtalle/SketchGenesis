@@ -64,33 +64,50 @@ const Grid = function(width, height) {
         }
     };
 
-    this.draw = context => {
-        context.fillStyle = "gray";
-        context.strokeStyle = "white";
+    this.draw = myr => {
+        for (let x = 0; x < xCells; ++x)
+            myr.primitives.drawLine(
+                Myr.Color.WHITE,
+                x * Grid.RESOLUTION,
+                0,
+                x * Grid.RESOLUTION,
+                yCells * Grid.RESOLUTION);
 
-        for (let x = 0; x < xCells; ++x) {
-            context.beginPath();
-            context.moveTo(x * Grid.RESOLUTION, 0);
-            context.lineTo(x * Grid.RESOLUTION, yCells * Grid.RESOLUTION);
-            context.stroke();
-        }
+        for (let y = 0; y < yCells; ++y)
+            myr.primitives.drawLine(
+                Myr.Color.WHITE,
+                0,
+                y * Grid.RESOLUTION,
+                xCells * Grid.RESOLUTION,
+                y * Grid.RESOLUTION);
+            /*
+            context.fillStyle = "gray";
+            context.strokeStyle = "white";
 
-        for (let y = 0; y < yCells; ++y) {
-            context.beginPath();
-            context.moveTo(0, y * Grid.RESOLUTION);
-            context.lineTo(xCells * Grid.RESOLUTION, y * Grid.RESOLUTION);
-            context.stroke();
-        }
+            for (let x = 0; x < xCells; ++x) {
+                context.beginPath();
+                context.moveTo(x * Grid.RESOLUTION, 0);
+                context.lineTo(x * Grid.RESOLUTION, yCells * Grid.RESOLUTION);
+                context.stroke();
+            }
 
-        for (let y = 0; y < yCells; ++y) for (let x = 0; x < xCells; ++x) {
-            if (get(x, y).agentCount === 0)
-                continue;
+            for (let y = 0; y < yCells; ++y) {
+                context.beginPath();
+                context.moveTo(0, y * Grid.RESOLUTION);
+                context.lineTo(xCells * Grid.RESOLUTION, y * Grid.RESOLUTION);
+                context.stroke();
+            }
 
-            context.fillStyle = "blue";
-            context.beginPath();
-            context.rect(x * Grid.RESOLUTION + 1, y * Grid.RESOLUTION + 1, Grid.RESOLUTION - 2, Grid.RESOLUTION - 2);
-            context.fill();
-        }
+            for (let y = 0; y < yCells; ++y) for (let x = 0; x < xCells; ++x) {
+                if (get(x, y).agentCount === 0)
+                    continue;
+
+                context.fillStyle = "blue";
+                context.beginPath();
+                context.rect(x * Grid.RESOLUTION + 1, y * Grid.RESOLUTION + 1, Grid.RESOLUTION - 2, Grid.RESOLUTION - 2);
+                context.fill();
+            }
+             */
     };
 };
 

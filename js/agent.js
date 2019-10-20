@@ -90,23 +90,9 @@ const Agent = function(position, divisions, parent = null) {
         }
     };
 
-    this.draw = context => {
-        context.save();
-        context.translate(position.x, position.y);
-        context.strokeStyle = "white";
-        context.beginPath();
-        context.arc(0, 0, Agent.RADIUS, 0, Math.PI + Math.PI);
-        context.stroke();
-
-        if (this.alive)
-            context.fillStyle = "cyan";
-        else
-            context.fillStyle = "black";
-
-        context.beginPath();
-        context.arc(0, 0, Agent.RADIUS - Agent.ATTRACTION_RADIUS, 0, Math.PI + Math.PI);
-        context.fill();
-        context.restore();
+    this.draw = myr => {
+        myr.primitives.drawCircle(Myr.Color.WHITE, position.x, position.y, Agent.RADIUS);
+        myr.primitives.fillCircle(Myr.Color.WHITE, position.x, position.y, Agent.RADIUS - Agent.ATTRACTION_RADIUS);
     };
 };
 

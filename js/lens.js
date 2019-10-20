@@ -1,4 +1,4 @@
-const Lens = function(radius) {
+const Lens = function(myr, radius) {
     const grid = new Grid(radius + radius, radius + radius);
     const flow = new Flow(radius + radius, radius + radius);
     const agents = [];
@@ -82,12 +82,16 @@ const Lens = function(radius) {
         grid.populate(agents);
     };
 
-    this.draw = context => {
-        grid.draw(context);
-        flow.draw(context);
+    this.draw = () => {
+        grid.draw(myr);
+        flow.draw(myr);
 
         for (const agent of agents)
-            agent.draw(context);
+            agent.draw(myr);
+    };
+
+    this.free = () => {
+
     };
 };
 

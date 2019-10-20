@@ -2,13 +2,18 @@ const TIME_STEP_MAX = 0.1;
 
 const wrapper = document.getElementById("wrapper");
 const canvas = document.getElementById("renderer");
+let myr = new Myr(canvas, false);
 let lastDate = new Date();
 let genesis = null;
 
 const resize = () => {
+    if (genesis)
+        genesis.free();
+
     canvas.width = wrapper.offsetWidth;
     canvas.height = wrapper.offsetHeight;
-    genesis = new Genesis(canvas.width, canvas.height);
+    myr = new Myr(canvas, false);
+    genesis = new Genesis(myr, canvas.width, canvas.height);
     canvas.addEventListener("click", event => {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -17,12 +22,13 @@ const resize = () => {
 };
 
 const update = timeStep => {
-    const context = canvas.getContext("2d");
-
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    myr.setClearColor(Myr.Color.BLACK);
+    myr.clear();
 
     genesis.update(Math.min(timeStep, TIME_STEP_MAX));
-    genesis.draw(context);
+    genesis.draw();
+
+    myr.flush();
 };
 
 const loopFunction = () => {

@@ -43,21 +43,21 @@ const Flow = function(width, height) {
         }
     };
 
-    this.draw = context => {
+    this.draw = myr => {
         for (let y = 0; y < yCells; ++y) for (let x = 0; x < xCells; ++x) {
             const index = x + y * xCells;
 
-            context.save();
-            context.translate(x * Flow.RESOLUTION, y * Flow.RESOLUTION);
+            myr.push();
+            myr.translate(x * Flow.RESOLUTION, y * Flow.RESOLUTION);
 
-            context.beginPath();
-            context.moveTo(0, 0);
-            context.lineTo(cells[index].x, cells[index].y);
-            context.strokeStyle = "white";
-            context.lineWidth = 4;
-            context.stroke();
+            myr.primitives.drawLine(
+                Myr.Color.CYAN,
+                0,
+                0,
+                cells[index].x,
+                cells[index].y);
 
-            context.restore();
+            myr.pop();
         }
     };
 
