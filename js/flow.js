@@ -7,7 +7,7 @@ const Flow = function(width, height) {
     let time = 0;
 
     for (let i = 0; i < cells.length; ++i) {
-        cells[i] = new Vector(0, 0);
+        cells[i] = new Myr.Vector(0, 0);
         noisesX[i] = cubicNoiseConfig(Math.random());
         noisesY[i] = cubicNoiseConfig(Math.random());
     }

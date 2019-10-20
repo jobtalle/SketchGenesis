@@ -1,19 +1,23 @@
 const Agent = function(position, divisions, parent = null) {
     let divisionTime = Agent.makeDivisionTime(divisions);
 
-    this.velocity = new Vector(0, 0);
+    this.velocity = new Myr.Vector(0, 0);
     this.position = position;
     this.alive = true;
 
     const split = spawn => {
         const direction = Math.random();
-        const offset = new Vector(
+        const offset = new Myr.Vector(
             Math.cos(direction) * Agent.DIVISION_OFFSET,
             Math.sin(direction) * Agent.DIVISION_OFFSET);
 
         parent = null;
 
-        spawn(new Agent(position.copy().add(offset), divisions, this));
+        const childPosition = position.copy();
+
+        childPosition.add(offset);
+
+        spawn(new Agent(childPosition, divisions, this));
     };
 
     this.collide = (agent, timeStep) => {

@@ -5,8 +5,8 @@ const Lens = function(radius) {
     let spawnTime = 0;
 
     const findSpawnLocation = () => {
-        const flowDirection = new Vector(0, 0);
-        const location = new Vector(0, 0);
+        const flowDirection = new Myr.Vector(0, 0);
+        const location = new Myr.Vector(0, 0);
         let i = 0;
 
         while (i < Lens.LOCATION_ATTEMPTS) {
@@ -29,7 +29,8 @@ const Lens = function(radius) {
 
             flowDirection.x = flowDirection.y = 0;
             flow.apply(location.x, location.y, flowDirection, 1);
-            location.add(flowDirection.normalize());
+            flowDirection.normalize();
+            location.add(flowDirection);
 
             if (location.x < 0 ||
                 location.y < 0 ||
@@ -46,8 +47,6 @@ const Lens = function(radius) {
     const spawn = agent => {
         agents.push(agent);
     };
-
-    this.getRadius = () => radius;
 
     this.update = timeStep => {
         flow.update(timeStep);
