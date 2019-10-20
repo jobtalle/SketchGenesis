@@ -1,4 +1,5 @@
 const Agent = function(position, divisions = Agent.makeDivisionCount(), parent = null) {
+    const membraneColor = new Myr.Color(0, 0, 0, 1);
     let divisionTime = Agent.makeDivisionTime(divisions);
 
     this.velocity = new Myr.Vector(0, 0);
@@ -57,7 +58,7 @@ const Agent = function(position, divisions = Agent.makeDivisionCount(), parent =
         this.position.x += this.velocity.x * timeStep;
         this.position.y += this.velocity.y * timeStep;
 
-        if (divisionTime > 0 && (divisionTime -= timeStep) < 0) {
+        if ((divisionTime -= timeStep) < 0 && this.alive) {
             if (divisions === 1) {
                 parent = null;
 
@@ -91,14 +92,15 @@ const Agent = function(position, divisions = Agent.makeDivisionCount(), parent =
     };
 
     this.drawMembrane = myr => {
-        if (this.alive) {
-            myr.primitives.fillCircleGradient(
-                Agent.COLOR_MEMBRANE_HIGH,
-                Agent.COLOR_MEMBRANE_LOW,
-                position.x,
-                position.y,
-                Agent.RADIUS + Agent.MEMBRANE_OFFSET);
-        }
+        if (!this.alive)
+            membraneColor.a = Math.max(0, 1 + divisionTime / Agent.DEATH_FADE);
+
+        myr.primitives.fillCircleGradient(
+            membraneColor,
+            Agent.COLOR_MEMBRANE_LOW,
+            position.x,
+            position.y,
+            Agent.RADIUS + Agent.MEMBRANE_OFFSET);
     };
 
     this.drawBody = myr => {
@@ -121,21 +123,20 @@ Agent.makeDivisionTime = divisions => {
         return Agent.DEAD_TIME_MIN + (Agent.DEAD_TIME_MAX - Agent.DEAD_TIME_MIN) * Math.random();
 };
 
-Agent.COLOR_MEMBRANE_HIGH = new Myr.Color(0, 0, 0, 1);
 Agent.COLOR_MEMBRANE_LOW = new Myr.Color(0, 0, 0, 0);
 Agent.MEMBRANE_OFFSET = 12;
-
+Agent.DEATH_FADE = 5;
 Agent.DIVISIONS_MIN = 32;
 Agent.DIVISIONS_MAX = 128;
 Agent.DIVISIONS_POWER = 2;
 Agent.DAMPING_ALIVE = 0.05;
-Agent.DAMPING_DEAD = 0.02;
+Agent.DAMPING_DEAD = 0.015;
 Agent.RADIUS = 24;
 Agent.ATTRACTION_RADIUS = 9;
 Agent.DIVISION_TIME_MIN = 2;
 Agent.DIVISION_TIME_MAX = 8;
-Agent.DEAD_TIME_MIN = 20;
-Agent.DEAD_TIME_MAX = 28;
+Agent.DEAD_TIME_MIN = 30;
+Agent.DEAD_TIME_MAX = 35;
 Agent.DIVISION_OFFSET = 1;
 Agent.FORCE_MULTIPLIER = 1.8;
 Agent.REPULSION_POWER = 1.4;

@@ -34,7 +34,7 @@ const Bodies = function(myr, width, height) {
     };
 
     this.draw = () => {
-        grid.draw(myr);
+        //grid.draw(myr);
 
         shader.draw(0, 0);
 

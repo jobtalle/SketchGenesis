@@ -14,11 +14,7 @@ const Lens = function(myr, radius) {
 
         bodies.draw();
 
-        myr.primitives.drawCircle(
-            Myr.Color.RED,
-            radius,
-            radius,
-            radius);
+        //myr.primitives.drawCircle(Myr.Color.RED, radius, radius, radius);
     };
 
     this.draw = () => {
@@ -31,6 +27,8 @@ const Lens = function(myr, radius) {
         surface.free();
         displacement.free();
     };
+
+    surface.setClearColor(Lens.BACKGROUND_COLOR);
 };
 
 Lens.makeDisplacement = (myr, diameter) => {
@@ -95,4 +93,5 @@ Lens.makeShader = (myr, surface, displacement) => {
     return shader;
 };
 
+Lens.BACKGROUND_COLOR = new Myr.Color(0.2, 0.2, 0.2, 1);
 Lens.CUTOFF = 0.9;
