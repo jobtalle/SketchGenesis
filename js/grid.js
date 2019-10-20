@@ -21,6 +21,18 @@ const Grid = function(width, height) {
         return cells[x + y * xCells];
     };
 
+    this.getWidth = () => {
+        return width;
+    };
+
+    this.getHeight = () => {
+        return height;
+    };
+
+    this.getFlow = () => {
+        return flow;
+    };
+
     this.findSpawnLocation = () => {
         const flowDirection = new Myr.Vector(0, 0);
         const location = new Myr.Vector(0, 0);

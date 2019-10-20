@@ -2,6 +2,7 @@ const Bodies = function(myr, width, height) {
     const surface = new myr.Surface(width, height);
     const shader = Bodies.makeShader(myr, surface);
     const grid = new Grid(width, height);
+    const liquid = new Liquid(myr, grid);
     const agents = [];
     let spawnTime = 0;
 
@@ -11,6 +12,7 @@ const Bodies = function(myr, width, height) {
 
     this.update = timeStep => {
         grid.update(timeStep);
+        liquid.update(timeStep);
 
         if ((spawnTime -= timeStep) < 0) {
             spawnTime += Bodies.SPAWN_TIME;
@@ -36,6 +38,7 @@ const Bodies = function(myr, width, height) {
     this.draw = () => {
         //grid.draw(myr);
 
+        liquid.draw();
         shader.draw(0, 0);
 
         for (const agent of agents)

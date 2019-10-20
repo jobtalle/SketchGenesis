@@ -28,7 +28,7 @@ const Lens = function(myr, radius) {
         displacement.free();
     };
 
-    surface.setClearColor(Lens.BACKGROUND_COLOR);
+    surface.setClearColor(Myr.Color.BLACK);
 };
 
 Lens.makeDisplacement = (myr, diameter) => {
@@ -78,7 +78,7 @@ Lens.makeShader = (myr, surface, displacement) => {
     const shader = new myr.Shader(
         "void main() {" +
             "highp vec4 sourceUV = texture(displacement, uv);" +
-            "mediump vec4 sourcePixel = texture(source, sourceUV.rg).rgba;" +
+            "mediump vec4 sourcePixel = texture(source, sourceUV.rg);" +
             "color = vec4(sourcePixel.rgb, sourcePixel.a * sourceUV.a);" +
         "}",
         [
@@ -93,5 +93,4 @@ Lens.makeShader = (myr, surface, displacement) => {
     return shader;
 };
 
-Lens.BACKGROUND_COLOR = new Myr.Color(0.2, 0.2, 0.2, 1);
 Lens.CUTOFF = 0.9;
