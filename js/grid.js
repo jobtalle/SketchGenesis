@@ -4,6 +4,7 @@ const Grid = function(width, height) {
         this.agentCount = 0;
     };
 
+    const flow = new Flow(width, height);
     const xCells = Math.ceil(width * Grid.RESOLUTION_INVERSE) + 1;
     const yCells = Math.ceil(height * Grid.RESOLUTION_INVERSE) + 1;
     const cells = new Array(xCells * yCells);
@@ -18,6 +19,45 @@ const Grid = function(width, height) {
 
     const get = (x, y) => {
         return cells[x + y * xCells];
+    };
+
+    this.findSpawnLocation = () => {
+        const flowDirection = new Myr.Vector(0, 0);
+        const location = new Myr.Vector(0, 0);
+
+        for (let i = 0; i < Grid.LOCATION_ATTEMPTS; ++i) {
+            if (Math.random() < 0.5) {
+                location.x = Math.random() * width;
+
+                if (Math.random() < 0.5)
+                    location.y = 0;
+                else
+                    location.y = height - 0.001;
+            }
+            else {
+                location.y = Math.random() * height;
+
+                if (Math.random() < 0.5)
+                    location.x = 0;
+                else
+                    location.x = width - 0.001;
+            }
+
+            flowDirection.x = flowDirection.y = 0;
+            flow.apply(location.x, location.y, flowDirection, 1);
+            flowDirection.normalize();
+            location.add(flowDirection);
+
+            if (location.x < 0 ||
+                location.y < 0 ||
+                location.x >= width ||
+                location.y >= height)
+                continue;
+
+            return location;
+        }
+
+        return null;
     };
 
     this.populate = agents => {
@@ -41,7 +81,11 @@ const Grid = function(width, height) {
         }
     };
 
+    this.getFlow = () => flow;
+
     this.update = timeStep => {
+        flow.update(timeStep);
+
         for (let y = 0; y < yCells - 1; ++y) for (let x = 0; x < xCells - 1; ++x) {
             const cell = get(x, y);
 
@@ -53,6 +97,8 @@ const Grid = function(width, height) {
 
                 for (let self = 0; self < cell.agentCount; ++self) {
                     const agent = cell.agents[self];
+
+                    flow.apply(agent.position.x, agent.position.y, agent.velocity, timeStep);
 
                     for (let other = self + 1; other < cell.agentCount; ++other)
                         agent.collide(cell.agents[other], timeStep);
@@ -106,3 +152,4 @@ const Grid = function(width, height) {
 
 Grid.RESOLUTION = Agent.RADIUS * 2;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;
+Grid.LOCATION_ATTEMPTS = 10;

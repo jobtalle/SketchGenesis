@@ -95,7 +95,4 @@ Lens.makeShader = (myr, surface, displacement) => {
     return shader;
 };
 
-Lens.SPAWN_TIME = 3;
-Lens.LOCATION_ATTEMPTS = 10;
-Lens.AGENT_SPAWN_BOOST = 1;
 Lens.CUTOFF = 0.9;
