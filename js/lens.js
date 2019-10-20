@@ -75,12 +75,6 @@ const Lens = function(myr, radius) {
 
             flow.apply(agent.position.x, agent.position.y, agent.velocity, timeStep);
             agent.update(timeStep, spawn);
-
-            if (agent.position.x < 0 ||
-                agent.position.y < 0 ||
-                agent.position.x >= radius + radius ||
-                agent.position.y >= radius + radius)
-                agents.splice(i, 1);
         }
 
         grid.populate(agents);

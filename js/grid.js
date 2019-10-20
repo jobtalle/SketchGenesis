@@ -4,8 +4,8 @@ const Grid = function(width, height) {
         this.agentCount = 0;
     };
 
-    const xCells = Math.ceil(width / Grid.RESOLUTION) + 1;
-    const yCells = Math.ceil(height / Grid.RESOLUTION) + 1;
+    const xCells = Math.ceil(width * Grid.RESOLUTION_INVERSE) + 1;
+    const yCells = Math.ceil(height * Grid.RESOLUTION_INVERSE) + 1;
     const cells = new Array(xCells * yCells);
 
     for (let i = 0; i < cells.length; ++i)
@@ -23,12 +23,21 @@ const Grid = function(width, height) {
     this.populate = agents => {
         clear();
 
-        for (const agent of agents) {
-            const x = Math.floor(agent.position.x * Grid.RESOLUTION_INVERSE);
-            const y = Math.floor(agent.position.y * Grid.RESOLUTION_INVERSE);
-            const cell = cells[x + y * xCells];
+        for (let i = agents.length; i-- > 0;) {
+            const agent = agents[i];
 
-            cell.agents[cell.agentCount++] = agent;
+            if (agent.position.x < 0 ||
+                agent.position.y < 0 ||
+                agent.position.x >= width ||
+                agent.position.y >= height)
+                agents.splice(i, 1);
+            else {
+                const x = Math.floor(agent.position.x * Grid.RESOLUTION_INVERSE);
+                const y = Math.floor(agent.position.y * Grid.RESOLUTION_INVERSE);
+                const cell = cells[x + y * xCells];
+
+                cell.agents[cell.agentCount++] = agent;
+            }
         }
     };
 
