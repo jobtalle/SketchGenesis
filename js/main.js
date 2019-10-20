@@ -17,10 +17,12 @@ const resize = () => {
 };
 
 const update = timeStep => {
+    genesis.update(Math.min(timeStep, TIME_STEP_MAX));
+
+    myr.bind();
     myr.setClearColor(Myr.Color.BLACK);
     myr.clear();
 
-    genesis.update(Math.min(timeStep, TIME_STEP_MAX));
     genesis.draw();
 
     myr.flush();
