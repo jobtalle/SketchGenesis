@@ -12,9 +12,8 @@ const Lens = function(myr, radius) {
     const findSpawnLocation = () => {
         const flowDirection = new Myr.Vector(0, 0);
         const location = new Myr.Vector(0, 0);
-        let i = 0;
 
-        while (i < Lens.LOCATION_ATTEMPTS) {
+        for (let i = 0; i < Lens.LOCATION_ATTEMPTS; ++i) {
             if (Math.random() < 0.5) {
                 location.x = Math.random() * (radius + radius);
 
@@ -108,7 +107,7 @@ const Lens = function(myr, radius) {
         displacement.free();
     };
 
-    spawn(new Agent(new Myr.Vector(radius, radius), 64));
+    spawn(new Agent(new Myr.Vector(radius, radius)));
 };
 
 Lens.makeDisplacement = (myr, diameter) => {

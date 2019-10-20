@@ -1,4 +1,4 @@
-const Agent = function(position, divisions, parent = null) {
+const Agent = function(position, divisions = Agent.makeDivisionCount(), parent = null) {
     let divisionTime = Agent.makeDivisionTime(divisions);
 
     this.velocity = new Myr.Vector(0, 0);
@@ -96,6 +96,20 @@ const Agent = function(position, divisions, parent = null) {
     };
 };
 
+Agent.makeDivisionCount = () => {
+    return Math.round(Agent.DIVISIONS_MIN + (Agent.DIVISIONS_MAX - Agent.DIVISIONS_MIN) * Math.pow(Math.random(), Agent.DIVISIONS_POWER));
+};
+
+Agent.makeDivisionTime = divisions => {
+    if (divisions > 1)
+        return Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
+    else
+        return Agent.DEAD_TIME_MIN + (Agent.DEAD_TIME_MAX - Agent.DEAD_TIME_MIN) * Math.random();
+};
+
+Agent.DIVISIONS_MIN = 32;
+Agent.DIVISIONS_MAX = 128;
+Agent.DIVISIONS_POWER = 2;
 Agent.DAMPING_ALIVE = 0.05;
 Agent.DAMPING_DEAD = 0.02;
 Agent.RADIUS = 24;
@@ -107,9 +121,3 @@ Agent.DEAD_TIME_MAX = 28;
 Agent.DIVISION_OFFSET = 1;
 Agent.FORCE_MULTIPLIER = 1.8;
 Agent.REPULSION_POWER = 1.4;
-Agent.makeDivisionTime = divisions => {
-    if (divisions > 1)
-        return Agent.DIVISION_TIME_MIN + (Agent.DIVISION_TIME_MAX - Agent.DIVISION_TIME_MIN) * Math.random();
-    else
-        return Agent.DEAD_TIME_MIN + (Agent.DEAD_TIME_MAX - Agent.DEAD_TIME_MIN) * Math.random();
-};
