@@ -93,6 +93,8 @@ const Lens = function(myr, radius) {
     this.free = () => {
 
     };
+
+    spawn(new Agent(new Myr.Vector(radius, radius), 64));
 };
 
 Lens.SPAWN_TIME = 3;

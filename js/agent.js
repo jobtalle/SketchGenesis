@@ -92,7 +92,7 @@ const Agent = function(position, divisions, parent = null) {
 
     this.draw = myr => {
         myr.primitives.drawCircle(Myr.Color.WHITE, position.x, position.y, Agent.RADIUS);
-        myr.primitives.fillCircle(Myr.Color.WHITE, position.x, position.y, Agent.RADIUS - Agent.ATTRACTION_RADIUS);
+        myr.primitives.fillCircle(this.alive ? Myr.Color.WHITE : Myr.Color.GREEN, position.x, position.y, Agent.RADIUS - Agent.ATTRACTION_RADIUS);
     };
 };
 
