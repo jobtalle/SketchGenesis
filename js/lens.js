@@ -1,5 +1,5 @@
 const Lens = function(myr, radius) {
-    const surface = new myr.Surface(radius + radius, radius + radius);
+    const surface = new myr.Surface(radius + radius, radius + radius, 0, true, false);
     const displacement = Lens.makeDisplacement(myr, radius + radius);
     const shader = Lens.makeShader(myr, surface, displacement, radius + radius);
     const grid = new Grid(radius + radius, radius + radius);
@@ -96,6 +96,12 @@ const Lens = function(myr, radius) {
         for (const agent of agents)
             agent.draw(myr);
 
+        myr.primitives.drawCircle(
+            Myr.Color.RED,
+            radius,
+            radius,
+            radius);
+
         myr.bind();
 
         shader.draw(x, y);
@@ -111,15 +117,32 @@ const Lens = function(myr, radius) {
 };
 
 Lens.makeDisplacement = (myr, diameter) => {
-    const surface = new myr.Surface(diameter, diameter);
+    const surface = new myr.Surface(diameter, diameter, 1, true, false);
+    const cutoffCompensation = 1 / (2 - Lens.CUTOFF);
+    const powerCompensation = 1 / (1 - Lens.CUTOFF);
     const shader = new myr.Shader(
         "void main() {" +
             "mediump float dx = uv.x - 0.5;" +
             "mediump float dy = uv.y - 0.5;" +
-            "if (dx * dx + dy * dy > 0.25)" +
+            "mediump float distSquared = dx * dx + dy * dy;" +
+            "if (distSquared> 0.25)" +
                 "color = vec4(0);" +
             "else {" +
-                "color = vec4(uv.x, uv.y, 0, 1);" +
+                "mediump float dist = sqrt(distSquared) * 2.0;" +
+                "mediump float cutoff = " + Lens.CUTOFF + ";" +
+                "if (dist < cutoff)" +
+                    "color = vec4(" +
+                        "0.5 + dx * " + cutoffCompensation + "," +
+                        "0.5 + dy * " + cutoffCompensation + "," +
+                        "0, 1);" +
+                "else {" +
+                    "mediump float factor = " + Lens.CUTOFF + " + (dist - " + Lens.CUTOFF + " + " +
+                        powerCompensation + " * (dist - " + Lens.CUTOFF + ") * (dist - " + Lens.CUTOFF + "));" +
+                    "color = vec4(" +
+                        "0.5 + dx * " + cutoffCompensation + " * factor / dist," +
+                        "0.5 + dy * " + cutoffCompensation + " * factor / dist," +
+                        "0, 1);" +
+                "}" +
             "}" +
         "}",
         [],
@@ -140,7 +163,7 @@ Lens.makeShader = (myr, surface, displacement) => {
     const shader = new myr.Shader(
         "void main() {" +
             "highp vec4 sourceUV = texture(displacement, uv);" +
-            "mediump vec4 sourcePixel = texture(source, uv).rgba;" +
+            "mediump vec4 sourcePixel = texture(source, sourceUV.rg).rgba;" +
             "color = vec4(sourcePixel.rgb, sourcePixel.a * sourceUV.a);" +
         "}",
         [
@@ -158,3 +181,4 @@ Lens.makeShader = (myr, surface, displacement) => {
 Lens.SPAWN_TIME = 3;
 Lens.LOCATION_ATTEMPTS = 10;
 Lens.AGENT_SPAWN_BOOST = 1;
+Lens.CUTOFF = 0.9;

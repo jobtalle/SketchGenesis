@@ -14,11 +14,6 @@ const resize = () => {
     canvas.height = wrapper.offsetHeight;
     myr = new Myr(canvas, false);
     genesis = new Genesis(myr, canvas.width, canvas.height);
-    canvas.addEventListener("click", event => {
-        const rect = canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-    });
 };
 
 const update = timeStep => {
