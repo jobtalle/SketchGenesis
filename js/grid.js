@@ -4,7 +4,6 @@ const Grid = function(width, height) {
         this.agentCount = 0;
     };
 
-    const flow = new Flow(width, height);
     const xCells = Math.ceil(width / Grid.RESOLUTION) + 1;
     const yCells = Math.ceil(height / Grid.RESOLUTION) + 1;
     const cells = new Array(xCells * yCells);
@@ -21,7 +20,7 @@ const Grid = function(width, height) {
         return cells[x + y * xCells];
     };
 
-    const populate = agents => {
+    this.populate = agents => {
         clear();
 
         for (const agent of agents) {
@@ -33,11 +32,7 @@ const Grid = function(width, height) {
         }
     };
 
-    this.update = (timeStep, agents) => {
-        flow.update(timeStep);
-
-        populate(agents);
-
+    this.update = timeStep => {
         for (let y = 0; y < yCells - 1; ++y) for (let x = 0; x < xCells - 1; ++x) {
             const cell = get(x, y);
 
@@ -49,8 +44,6 @@ const Grid = function(width, height) {
 
                 for (let self = 0; self < cell.agentCount; ++self) {
                     const agent = cell.agents[self];
-
-                    flow.apply(agent.position.x, agent.position.y, agent.velocity, timeStep);
 
                     for (let other = self + 1; other < cell.agentCount; ++other)
                         agent.collide(cell.agents[other], timeStep);
@@ -98,8 +91,6 @@ const Grid = function(width, height) {
             context.rect(x * Grid.RESOLUTION + 1, y * Grid.RESOLUTION + 1, Grid.RESOLUTION - 2, Grid.RESOLUTION - 2);
             context.fill();
         }
-
-        flow.draw(context);
     };
 };
 

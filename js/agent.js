@@ -13,10 +13,7 @@ const Agent = function(position, divisions, parent = null) {
 
         parent = null;
 
-        spawn(
-            this.position.x,
-            this.position.y + 0.5,
-            new Agent(position.copy().add(offset), divisions, this));
+        spawn(new Agent(position.copy().add(offset), divisions, this));
     };
 
     this.collide = (agent, timeStep) => {
@@ -115,8 +112,8 @@ Agent.RADIUS = 24;
 Agent.ATTRACTION_RADIUS = 9;
 Agent.DIVISION_TIME_MIN = 2;
 Agent.DIVISION_TIME_MAX = 8;
-Agent.DEAD_TIME_MIN = 8;
-Agent.DEAD_TIME_MAX = 12;
+Agent.DEAD_TIME_MIN = 20;
+Agent.DEAD_TIME_MAX = 28;
 Agent.DIVISION_OFFSET = 1;
 Agent.FORCE_MULTIPLIER = 1.8;
 Agent.REPULSION_POWER = 1.4;

@@ -1,30 +1,13 @@
 const Genesis = function(width, height) {
-    const grid = new Grid(width, height);
-    const agents = [];
-
-    this.spawn = (x, y, agent) => {
-        agents.push(agent);
-    };
+    const lens = new Lens(Math.min(
+        Math.floor(width * 0.5),
+        Math.floor( height * 0.5)));
 
     this.update = timeStep => {
-        grid.update(timeStep, agents);
-
-        for (let i = agents.length; i-- > 0;) {
-            agents[i].update(timeStep, this.spawn);
-
-            if (agents[i].position.x < 0 ||
-                agents[i].position.y < 0 ||
-                agents[i].position.x >= width ||
-                agents[i].position.y >= height) {
-                agents.splice(i, 1);
-            }
-        }
+        lens.update(timeStep);
     };
 
     this.draw = context => {
-        //grid.draw(context);
-
-        for (const agent of agents)
-            agent.draw(context);
+        lens.draw(context);
     };
 };

@@ -13,8 +13,6 @@ const resize = () => {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
-
-        genesis.spawn(x, y, new Agent(new Vector(x, y), 64));
     });
 };
 

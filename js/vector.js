@@ -20,3 +20,11 @@ Vector.prototype.multiply = function(scalar) {
 
     return this;
 };
+
+Vector.prototype.length = function() {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+};
+
+Vector.prototype.normalize = function() {
+    return this.multiply(1 / this.length());
+};
