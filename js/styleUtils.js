@@ -5,6 +5,6 @@ const StyleUtils = {
 
     getColor: function(name) {
         return Myr.Color.fromHex(
-            StyleUtils.getVariable(name).toUpperCase().replace("#", ""));
+            StyleUtils.getVariable(name).toUpperCase().replace("#", "").replace(" ", ""));
     }
 };
