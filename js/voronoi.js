@@ -1,4 +1,4 @@
-const Voronoi = function(myr, width, height) {
+const Voronoi = function(myr, width, height, maxDistance) {
     const color = new Myr.Color(0, 0, 1, 1);
     const shader = Voronoi.makeShader(myr, width, height);
     const surfaces = [
@@ -52,10 +52,16 @@ const Voronoi = function(myr, width, height) {
     for (const surface of surfaces)
         surface.setClearColor(Voronoi.CLEAR_COLOR);
 
-    while (maxStep < width || maxStep < height)
-        maxStep <<= 1;
+    if (maxDistance) {
+        while (maxStep < maxDistance)
+            maxStep <<= 1;
+    }
+    else {
+        while (maxStep < width || maxStep < height)
+            maxStep <<= 1;
+    }
 
-    maxStep >>= 1;
+    maxStep <<= 1;
 };
 
 Voronoi.makeShader = (myr, width, height) => {

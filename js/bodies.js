@@ -1,5 +1,5 @@
 const Bodies = function(myr, width, height) {
-    const voronoi = new Voronoi(myr, width, height);
+    const voronoi = new Voronoi(myr, width, height, Agent.RADIUS + Agent.MEMBRANE_OFFSET);
     const shader = Bodies.makeShader(myr, width, height);
     const grid = new Grid(width, height);
     const liquid = new Liquid(myr, grid);
