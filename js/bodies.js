@@ -43,8 +43,6 @@ const Bodies = function(myr, width, height) {
         shader.setSurface("source", voronoi.getSurface());
         shader.draw(0, 0);
 
-        //voronoi.getSurface().draw(0, 0);
-
         for (const agent of agents)
             agent.drawBody(myr);
     };
@@ -63,8 +61,14 @@ Bodies.makeShader = (myr, width, height) => {
             "const mediump vec2 size = vec2(" + width + ", " + height + ");" +
             "mediump vec4 sourcePixel = texture(source, uv);" +
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
-            "if (distance < 32.0)" +
-                "color = vec4(0.5, 0.7, 0.1, 1.0);" +
+            "bool same = true;" +
+            "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
+            "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
+            "    texture(source, uv + pixelSize * vec2(1, -1)).rg != sourcePixel.rg ||" +
+            "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +
+                "same = false;" +
+            "if (same && distance < 32.0)" +
+                "color = vec4(0.35, 0.8, 0.9, 1.0);" +
             "else " +
                 "color = vec4(0);" +
         "}",

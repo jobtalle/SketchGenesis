@@ -1,5 +1,5 @@
 const Lens = function(myr, radius) {
-    const bodies = new Bodies(myr, radius + radius + radius, radius + radius);
+    const bodies = new Bodies(myr, radius + radius, radius + radius);
     const surface = new myr.Surface(radius + radius, radius + radius, 0, true, false);
     const displacement = Lens.makeDisplacement(myr, radius + radius);
     const shader = Lens.makeShader(myr, surface, displacement, radius + radius);
