@@ -105,10 +105,10 @@ const Agent = function(position, divisions = Agent.makeDivisionCount(), parent =
 
     this.drawBody = myr => {
         myr.primitives.fillCircle(
-            Myr.Color.WHITE,
+            Myr.Color.BLACK,
             position.x,
             position.y,
-            Agent.RADIUS - Agent.ATTRACTION_RADIUS);
+            2);
     };
 };
 
