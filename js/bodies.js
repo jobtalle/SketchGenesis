@@ -49,10 +49,10 @@ const Bodies = function(myr, width, height) {
         //liquid.draw();
         //shader.draw(0, 0);
 
+        voronoi.getSurface().draw(0, 0);
+
         for (const agent of agents)
             agent.drawBody(myr);
-
-        voronoi.getSurface().draw(0, 0);
     };
 
     this.free = () => {

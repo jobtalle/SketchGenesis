@@ -2,8 +2,8 @@ const Voronoi = function(myr, width, height) {
     const color = new Myr.Color(0, 0, 1, 1);
     const shader = Voronoi.makeShader(myr);
     const surfaces = [
-        new myr.Surface(width, height),
-        new myr.Surface(width, height)];
+        new myr.Surface(width, height, 1, false, false),
+        new myr.Surface(width, height, 1, false, false)];
     let front = 0;
     let maxStep = 1;
 
@@ -53,16 +53,18 @@ const Voronoi = function(myr, width, height) {
 
     while (maxStep < width || maxStep < height)
         maxStep <<= 1;
+
+    maxStep >>= 1;
 };
 
 Voronoi.makeShader = myr => {
     return new myr.Shader(
         "void main() {" +
             "mediump float bestDistance = 10000.0;" +
-            "lowp vec4 bestSample = vec4(0);" +
+            "mediump vec4 bestSample = vec4(0);" +
             "for (int y = -1; y < 2; ++y) {" +
                 "for (int x = -1; x < 2; ++x) {" +
-                    "lowp vec4 pixel = texture(source, uv + vec2(x, y) * step * pixelSize);" +
+                    "mediump vec4 pixel = texture(source, uv + vec2(x, y) * step * pixelSize);" +
                     "mediump float distance = length(pixel.xy - uv);" +
                     "if (pixel.a != 0.0 && distance < bestDistance) {" +
                         "bestDistance = distance;" +
