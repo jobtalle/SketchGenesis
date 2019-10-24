@@ -91,6 +91,13 @@ const Agent = function(position, divisions = Agent.makeDivisionCount(), parent =
         }
     };
 
+    this.getLife = () => {
+        if (this.alive)
+            return 1;
+
+        return Math.max(0, 1 + divisionTime / Agent.DEATH_FADE);
+    };
+
     this.drawBody = myr => {
         myr.primitives.fillCircle(
             Myr.Color.BLACK,

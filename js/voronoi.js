@@ -14,9 +14,10 @@ const Voronoi = function(myr, width, height) {
         surfaces[front].clear();
     };
 
-    this.addSeed = position => {
+    this.addSeed = (position, b) => {
         color.r = position.x / width;
         color.g = position.y / height;
+        color.b = b;
 
         myr.primitives.drawPoint(color, position.x, position.y);
     };

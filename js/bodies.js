@@ -31,7 +31,7 @@ const Bodies = function(myr, width, height) {
         voronoi.prime();
 
         for (const agent of agents)
-            voronoi.addSeed(agent.position);
+            voronoi.addSeed(agent.position, agent.getLife());
 
         voronoi.apply();
     };
@@ -59,16 +59,19 @@ Bodies.makeShader = (myr, width, height) => {
     return new myr.Shader(
         "void main() {" +
             "const mediump vec2 size = vec2(" + width + ", " + height + ");" +
+            "const lowp vec4 colorInner = " + GLSLUtils.colorToVec4(Bodies.COLOR_INNER) + ";" +
+            "const lowp vec4 colorOuter = " + GLSLUtils.colorToVec4(Bodies.COLOR_OUTER) + ";" +
             "mediump vec4 sourcePixel = texture(source, uv);" +
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
-            "bool same = true;" +
-            "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
-            "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
-            "    texture(source, uv + pixelSize * vec2(1, -1)).rg != sourcePixel.rg ||" +
-            "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +
-                "same = false;" +
-            "if (same && distance < 32.0)" +
-                "color = vec4(0.35, 0.8, 0.9, 1.0);" +
+            "if (distance < 32.0) {" +
+                "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
+                "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
+                "    texture(source, uv + pixelSize * vec2(1, -1)).rg != sourcePixel.rg ||" +
+                "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +
+                    "color = colorOuter;" +
+                "else " +
+                    "color = vec4(mix(colorInner, colorOuter, distance / 32.0) * vec4(vec3(1), 0.3 + 0.6 * sourcePixel.b));" +
+            "}" +
             "else " +
                 "color = vec4(0);" +
         "}",
@@ -79,3 +82,5 @@ Bodies.makeShader = (myr, width, height) => {
 };
 
 Bodies.SPAWN_TIME = 2;
+Bodies.COLOR_INNER = new Myr.Color(1, 1, 1);
+Bodies.COLOR_OUTER = new Myr.Color(0.35, 0.7, 0.6);
