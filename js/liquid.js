@@ -3,6 +3,7 @@ const Liquid = function(myr, grid) {
         this.position = new Myr.Vector(grid.getWidth() * Math.random(), grid.getHeight() * Math.random());
         this.velocity = new Myr.Vector(0, 0);
         this.life = 1;
+        this.angle = 0;
         this.lifeSpeed = 1 / (Liquid.PARTICLE_LIFE_MIN + (Liquid.PARTICLE_LIFE_MAX - Liquid.PARTICLE_LIFE_MIN) * Math.random());
     };
 
@@ -27,16 +28,23 @@ const Liquid = function(myr, grid) {
                     particle.position.y,
                     particle.velocity,
                     Liquid.VELOCITY_MULTIPLIER);
+                particle.angle = -Math.atan2(particle.velocity.y, particle.velocity.x);
             }
 
             particleColorInner.a = Liquid.COLOR_INNER.a * (0.5 * Math.cos((particle.life - 0.5) * Math.PI * 2) + 0.5);
 
+            myr.push();
+            myr.translate(particle.position.x, particle.position.y);
+            myr.rotate(particle.angle);
+            myr.scale(3, 1);
+
             myr.primitives.fillCircleGradient(
                 particleColorInner,
                 Liquid.COLOR_OUTER,
-                particle.position.x,
-                particle.position.y,
+                0, 0,
                 5);
+
+            myr.pop();
         }
     };
 
@@ -50,11 +58,14 @@ const Liquid = function(myr, grid) {
 
     for (let i = 0; i < particles.length; ++i)
         particles[i] = new Particle();
+
+    surface.setClearColor(Liquid.CLEAR_COLOR);
 };
 
+Liquid.CLEAR_COLOR = StyleUtils.getColor("--color-background");
 Liquid.PARTICLE_LIFE_MIN = 2;
-Liquid.PARTICLE_LIFE_MAX = 5;
-Liquid.VELOCITY_MULTIPLIER = 0.002;
-Liquid.COLOR_INNER = new Myr.Color(0.7, 0.6, 0.8, 0.5);
+Liquid.PARTICLE_LIFE_MAX = 4;
+Liquid.VELOCITY_MULTIPLIER = 0.003;
+Liquid.COLOR_INNER = StyleUtils.getColor("--color-liquid-particles");
 Liquid.COLOR_OUTER = new Myr.Color(Liquid.COLOR_INNER.r, Liquid.COLOR_INNER.g, Liquid.COLOR_INNER.b, 0);
-Liquid.PARTICLES_PER_PIXEL = 0.0005;
+Liquid.PARTICLES_PER_PIXEL = 0.0007;

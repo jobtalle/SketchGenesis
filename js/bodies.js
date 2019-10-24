@@ -37,8 +37,6 @@ const Bodies = function(myr, width, height) {
     };
 
     this.draw = () => {
-        //grid.draw(myr);
-
         liquid.draw();
         shader.setSurface("source", voronoi.getSurface());
         shader.draw(0, 0);

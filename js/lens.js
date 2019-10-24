@@ -8,10 +8,7 @@ const Lens = function(myr, radius) {
 
     this.update = timeStep => {
         bodies.update(timeStep);
-
         surface.bind();
-        surface.clear();
-
         bodies.draw();
 
         //myr.primitives.drawCircle(Myr.Color.RED, radius, radius, radius);
@@ -27,8 +24,6 @@ const Lens = function(myr, radius) {
         surface.free();
         displacement.free();
     };
-
-    surface.setClearColor(Lens.CLEAR_COLOR);
 };
 
 Lens.makeDisplacement = (myr, diameter) => {
@@ -93,5 +88,4 @@ Lens.makeShader = (myr, surface, displacement) => {
     return shader;
 };
 
-Lens.CLEAR_COLOR = StyleUtils.getColor("--color-background");
 Lens.CUTOFF = 0.9;

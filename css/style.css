@@ -1,7 +1,8 @@
 :root {
-    --color-background: #93887a;
+    --color-background: #ad9d81;
     --color-membrane-inner: #ffffff;
     --color-membrane-outer: #4c753b;
+    --color-liquid-particles: #4c753b;
 }
 
 body {
