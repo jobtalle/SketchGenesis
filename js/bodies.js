@@ -82,5 +82,5 @@ Bodies.makeShader = (myr, width, height) => {
 };
 
 Bodies.SPAWN_TIME = 2;
-Bodies.COLOR_INNER = new Myr.Color(1, 1, 1);
-Bodies.COLOR_OUTER = new Myr.Color(0.35, 0.7, 0.6);
+Bodies.COLOR_INNER = StyleUtils.getColor("--color-membrane-inner");
+Bodies.COLOR_OUTER = StyleUtils.getColor("--color-membrane-outer");

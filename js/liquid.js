@@ -66,6 +66,6 @@ const Liquid = function(myr, grid) {
 };
 
 Liquid.RADIUS = 80;
-Liquid.COLOR_INNER = new Myr.Color(0.4, 0.8, 0.4, 0.05);
+Liquid.COLOR_INNER = new Myr.Color(0.7, 0.6, 0.8, 0.05);
 Liquid.COLOR_OUTER = new Myr.Color(Liquid.COLOR_INNER.r, Liquid.COLOR_INNER.g, Liquid.COLOR_INNER.b, 0);
 Liquid.PARTICLES_PER_PIXEL = 0.0005;

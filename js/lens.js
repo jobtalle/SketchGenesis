@@ -93,5 +93,5 @@ Lens.makeShader = (myr, surface, displacement) => {
     return shader;
 };
 
-Lens.CLEAR_COLOR = new Myr.Color(0.2, 0.4, 0.2);
+Lens.CLEAR_COLOR = new Myr.Color(0.2, 0.2, 0.2);
 Lens.CUTOFF = 0.9;
