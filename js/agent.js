@@ -91,18 +91,6 @@ const Agent = function(position, divisions = Agent.makeDivisionCount(), parent =
         }
     };
 
-    this.drawMembrane = myr => {
-        if (!this.alive)
-            membraneColor.a = Math.max(0, 1 + divisionTime / Agent.DEATH_FADE);
-
-        myr.primitives.fillCircleGradient(
-            membraneColor,
-            Agent.COLOR_MEMBRANE_LOW,
-            position.x,
-            position.y,
-            Agent.RADIUS + Agent.MEMBRANE_OFFSET);
-    };
-
     this.drawBody = myr => {
         myr.primitives.fillCircle(
             Myr.Color.BLACK,
@@ -137,6 +125,6 @@ Agent.DIVISION_TIME_MIN = 2;
 Agent.DIVISION_TIME_MAX = 8;
 Agent.DEAD_TIME_MIN = 30;
 Agent.DEAD_TIME_MAX = 35;
-Agent.DIVISION_OFFSET = 1;
+Agent.DIVISION_OFFSET = 2;
 Agent.FORCE_MULTIPLIER = 1.8;
 Agent.REPULSION_POWER = 1.4;
