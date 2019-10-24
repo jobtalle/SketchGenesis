@@ -99,11 +99,12 @@ const Agent = function(position, divisions = Agent.makeDivisionCount(), parent =
     };
 
     this.drawBody = myr => {
-        myr.primitives.fillCircle(
-            Myr.Color.BLACK,
-            position.x,
-            position.y,
-            2);
+        if (this.alive)
+            myr.primitives.fillCircle(
+                Myr.Color.BLACK,
+                position.x,
+                position.y,
+                2);
     };
 };
 
