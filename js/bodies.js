@@ -68,7 +68,7 @@ Bodies.makeShader = (myr, width, height) => {
                 "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(1, -1)).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +
-                    "color = colorOuter;" +
+                    "color = colorOuter * vec4(vec3(1), 0.3);" +
                 "else " +
                     "color = vec4(mix(colorInner, colorOuter, distance / 32.0) * vec4(vec3(1), 0.3 + 0.6 * sourcePixel.b));" +
             "}" +
