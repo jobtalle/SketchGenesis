@@ -1,4 +1,5 @@
 const Bodies = function(myr, width, height) {
+    const voronoi = new Voronoi(myr, width, height);
     const surface = new myr.Surface(width, height);
     const shader = Bodies.makeShader(myr, surface);
     const grid = new Grid(width, height);
@@ -33,19 +34,29 @@ const Bodies = function(myr, width, height) {
 
         for (const agent of agents)
             agent.drawMembrane(myr);
+
+        voronoi.prime();
+
+        for (const agent of agents)
+            voronoi.addSeed(agent.position);
+
+        voronoi.apply();
     };
 
     this.draw = () => {
         //grid.draw(myr);
 
-        liquid.draw();
-        shader.draw(0, 0);
+        //liquid.draw();
+        //shader.draw(0, 0);
 
         for (const agent of agents)
             agent.drawBody(myr);
+
+        voronoi.getSurface().draw(0, 0);
     };
 
     this.free = () => {
+        voronoi.free();
         shader.free();
         surface.free();
     };
