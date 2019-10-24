@@ -2,34 +2,9 @@ const Liquid = function(myr, grid) {
     const Particle = function() {
         this.position = new Myr.Vector(grid.getWidth() * Math.random(), grid.getHeight() * Math.random());
         this.velocity = new Myr.Vector(0, 0);
-        this.damping = Particle.DAMPING_MIN + (Particle.DAMPING_MAX - Particle.DAMPING_MIN) * Math.random();
-        this.alpha = 1;
+        this.life = 1;
+        this.lifeSpeed = 1 / (Liquid.PARTICLE_LIFE_MIN + (Liquid.PARTICLE_LIFE_MAX - Liquid.PARTICLE_LIFE_MIN) * Math.random());
     };
-
-    Particle.prototype.update = function(timeStep) {
-        this.position.x += this.velocity.x * timeStep;
-        this.position.y += this.velocity.y * timeStep;
-        this.velocity.x -= this.velocity.x * this.damping;
-        this.velocity.y -= this.velocity.y * this.damping;
-
-        if (this.position.x < 0 ||
-            this.position.x >= grid.getWidth() ||
-            this.position.y < 0 ||
-            this.position.y > grid.getHeight()) {
-            this.position.x = grid.getWidth() * Math.random();
-            this.position.y = grid.getHeight() * Math.random();
-            this.alpha = 0;
-        }
-        else if (this.alpha !== 1)
-            if ((this.alpha += timeStep * Particle.ALPHA_INCREASE) > 1)
-                this.alpha = 1;
-    };
-
-    Particle.LIFE_MIN = 2;
-    Particle.LIFE_MAX = 5;
-    Particle.DAMPING_MIN = 0.005;
-    Particle.DAMPING_MAX = 0.02;
-    Particle.ALPHA_INCREASE = 0.2;
 
     const particleColorInner = Liquid.COLOR_INNER.copy();
     const particles = new Array(Math.ceil(grid.getWidth() * grid.getHeight() * Liquid.PARTICLES_PER_PIXEL));
@@ -40,16 +15,28 @@ const Liquid = function(myr, grid) {
         surface.clear();
 
         for (const particle of particles) {
-            grid.getFlow().apply(particle.position.x, particle.position.y, particle.velocity, timeStep * 0.1);
-            particle.update(timeStep);
-            particleColorInner.a = particle.alpha * Liquid.COLOR_INNER.a;
+            particle.position.add(particle.velocity);
+
+            if ((particle.life += timeStep * particle.lifeSpeed) > 1) {
+                particle.life = 0;
+                particle.position.x = Math.random() * grid.getWidth();
+                particle.position.y = Math.random() * grid.getHeight();
+                particle.velocity.x = particle.velocity.y = 0;
+                grid.getFlow().apply(
+                    particle.position.x,
+                    particle.position.y,
+                    particle.velocity,
+                    Liquid.VELOCITY_MULTIPLIER);
+            }
+
+            particleColorInner.a = Liquid.COLOR_INNER.a * (0.5 * Math.cos((particle.life - 0.5) * Math.PI * 2) + 0.5);
 
             myr.primitives.fillCircleGradient(
                 particleColorInner,
                 Liquid.COLOR_OUTER,
                 particle.position.x,
                 particle.position.y,
-                Liquid.RADIUS);
+                5);
         }
     };
 
@@ -65,7 +52,9 @@ const Liquid = function(myr, grid) {
         particles[i] = new Particle();
 };
 
-Liquid.RADIUS = 80;
-Liquid.COLOR_INNER = new Myr.Color(0.7, 0.6, 0.8, 0.05);
+Liquid.PARTICLE_LIFE_MIN = 2;
+Liquid.PARTICLE_LIFE_MAX = 5;
+Liquid.VELOCITY_MULTIPLIER = 0.002;
+Liquid.COLOR_INNER = new Myr.Color(0.7, 0.6, 0.8, 0.5);
 Liquid.COLOR_OUTER = new Myr.Color(Liquid.COLOR_INNER.r, Liquid.COLOR_INNER.g, Liquid.COLOR_INNER.b, 0);
 Liquid.PARTICLES_PER_PIXEL = 0.0005;
