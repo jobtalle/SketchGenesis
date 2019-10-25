@@ -40,9 +40,6 @@ const Bodies = function(myr, width, height) {
         liquid.draw();
         shader.setSurface("source", voronoi.getSurface());
         shader.draw(0, 0);
-
-        for (const agent of agents)
-            agent.drawBody(myr);
     };
 
     this.free = () => {
@@ -62,7 +59,9 @@ Bodies.makeShader = (myr, width, height) => {
             "lowp vec4 sourcePixel = texture(source, uv);" +
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
             "if (distance < 32.0) {" +
-                "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
+                "if (distance < 2.0)" +
+                    "color = vec4(vec3(0), sourcePixel.b);" +
+                "else if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(1, -1)).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +

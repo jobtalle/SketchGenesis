@@ -39,6 +39,5 @@ const loopFunction = () => {
 
 window.onresize = resize;
 
-
 resize();
 requestAnimationFrame(loopFunction);
