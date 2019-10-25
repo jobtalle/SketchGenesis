@@ -27,7 +27,7 @@ const Lens = function(myr, radius) {
 };
 
 Lens.makeDisplacement = (myr, diameter) => {
-    const surface = new myr.Surface(diameter, diameter, 1, true, false);
+    const surface = new myr.Surface(diameter, diameter, 1, false, false);
     const cutoffCompensation = 1 / (2 - Lens.CUTOFF);
     const powerCompensation = 1 / (1 - Lens.CUTOFF);
     const shader = new myr.Shader(

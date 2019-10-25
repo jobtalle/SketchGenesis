@@ -33,18 +33,12 @@ const Liquid = function(myr, grid) {
 
             particleColorInner.a = Liquid.COLOR_INNER.a * (0.5 * Math.cos((particle.life - 0.5) * Math.PI * 2) + 0.5);
 
-            myr.push();
-            myr.translate(particle.position.x, particle.position.y);
-            myr.rotate(particle.angle);
-            myr.scale(3, 1);
-
             myr.primitives.fillCircleGradient(
                 particleColorInner,
                 Liquid.COLOR_OUTER,
-                0, 0,
+                particle.position.x,
+                particle.position.y,
                 5);
-
-            myr.pop();
         }
     };
 

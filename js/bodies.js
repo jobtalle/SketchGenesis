@@ -59,7 +59,7 @@ Bodies.makeShader = (myr, width, height) => {
             "const mediump vec2 size = vec2(" + width + ", " + height + ");" +
             "const lowp vec4 colorInner = " + GLSLUtils.colorToVec4(Bodies.COLOR_INNER) + ";" +
             "const lowp vec4 colorOuter = " + GLSLUtils.colorToVec4(Bodies.COLOR_OUTER) + ";" +
-            "mediump vec4 sourcePixel = texture(source, uv);" +
+            "lowp vec4 sourcePixel = texture(source, uv);" +
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
             "if (distance < 32.0) {" +
                 "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +

@@ -13,14 +13,14 @@ const resize = () => {
     canvas.width = wrapper.offsetWidth;
     canvas.height = wrapper.offsetHeight;
     myr = new Myr(canvas, false);
-    genesis = new Genesis(myr, canvas.width, canvas.height);
+    genesis = new Genesis(myr, canvas.width * 0.76, canvas.height * 0.76);
 };
 
 const update = timeStep => {
     genesis.update(Math.min(timeStep, TIME_STEP_MAX));
 
-    myr.bind();
     myr.setClearColor(Myr.Color.BLACK);
+    myr.bind();
     myr.clear();
 
     genesis.draw();
@@ -38,6 +38,7 @@ const loopFunction = () => {
 };
 
 window.onresize = resize;
+
 
 resize();
 requestAnimationFrame(loopFunction);
