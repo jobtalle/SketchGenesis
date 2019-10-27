@@ -1,7 +1,9 @@
 :root {
     --color-background: #ad9d81;
-    --color-membrane-inner: #ffffff;
-    --color-membrane-outer: #4c753b;
+    --color-membrane-inner: #ffffff55;
+    --color-membrane-outer: #4c753bff;
+    --color-membrane-inner-dead: #ffffff44;
+    --color-membrane-outer-dead: #77777788;
     --color-liquid-particles: #4c753b;
 }
 

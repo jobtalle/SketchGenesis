@@ -53,20 +53,28 @@ const Bodies = function(myr, width, height) {
 };
 
 Bodies.makeRamp = myr => {
-    const surface = new myr.Surface(Bodies.RAMP_SIZE, 1, 0, true, false);
+    const surface = new myr.Surface(Bodies.RAMP_SIZE_U, Bodies.RAMP_SIZE_V, 0, true, false);
 
     surface.bind();
 
     myr.primitives.fillRectangleGradient(
-        Bodies.COLOR_INNER,
-        Bodies.COLOR_OUTER,
+        Bodies.COLOR_INNER_DEAD,
+        Bodies.COLOR_OUTER_DEAD,
         Bodies.COLOR_INNER,
         Bodies.COLOR_OUTER,
         0,
         0,
         surface.getWidth(),
         surface.getHeight());
-    myr.primitives.drawLine(Myr.Color.BLACK, 0, 1, 8, 1);
+    myr.primitives.fillRectangleGradient(
+        Bodies.COLOR_CORE_DEAD,
+        Bodies.COLOR_CORE_DEAD,
+        Bodies.COLOR_CORE,
+        Bodies.COLOR_CORE,
+        0,
+        0,
+        8,
+        surface.getHeight());
 
     return surface;
 };
@@ -86,7 +94,7 @@ Bodies.makeShader = (myr, width, height, ramp) => {
                     "sampleAt = 1.0;" +
                 "else " +
                     "sampleAt = distance / 32.0;" +
-                "color = vec4(texture(colorRamp, vec2(sampleAt, sourcePixel.b)).rgb, 1);" +
+                "color = texture(colorRamp, vec2(sampleAt, sourcePixel.b));" +
             "}" +
             "else " +
                 "color = vec4(0);" +
@@ -102,7 +110,12 @@ Bodies.makeShader = (myr, width, height, ramp) => {
     return shader;
 };
 
-Bodies.RAMP_SIZE = 128;
+Bodies.RAMP_SIZE_U = 128;
+Bodies.RAMP_SIZE_V = 32;
 Bodies.SPAWN_TIME = 2;
+Bodies.COLOR_CORE = Myr.Color.BLACK;
+Bodies.COLOR_CORE_DEAD = new Myr.Color(0, 0, 0, 0);
 Bodies.COLOR_INNER = StyleUtils.getColor("--color-membrane-inner");
+Bodies.COLOR_INNER_DEAD = StyleUtils.getColor("--color-membrane-inner-dead");
 Bodies.COLOR_OUTER = StyleUtils.getColor("--color-membrane-outer");
+Bodies.COLOR_OUTER_DEAD = StyleUtils.getColor("--color-membrane-outer-dead");
