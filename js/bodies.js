@@ -1,6 +1,7 @@
 const Bodies = function(myr, width, height) {
+    const ramp = Bodies.makeRamp(myr);
     const voronoi = new Voronoi(myr, width, height, Agent.RADIUS + Agent.MEMBRANE_OFFSET);
-    const shader = Bodies.makeShader(myr, width, height);
+    const shader = Bodies.makeShader(myr, width, height, ramp);
     const grid = new Grid(width, height);
     const liquid = new Liquid(myr, grid);
     const agents = [];
@@ -45,39 +46,63 @@ const Bodies = function(myr, width, height) {
     this.free = () => {
         voronoi.free();
         shader.free();
+        ramp.free();
     };
 
     spawn(new Agent(new Myr.Vector(width * 0.5, height * 0.5)));
 };
 
-Bodies.makeShader = (myr, width, height) => {
-    return new myr.Shader(
+Bodies.makeRamp = myr => {
+    const surface = new myr.Surface(Bodies.RAMP_SIZE, 1, 0, true, false);
+
+    surface.bind();
+
+    myr.primitives.fillRectangleGradient(
+        Bodies.COLOR_INNER,
+        Bodies.COLOR_OUTER,
+        Bodies.COLOR_INNER,
+        Bodies.COLOR_OUTER,
+        0,
+        0,
+        surface.getWidth(),
+        surface.getHeight());
+    myr.primitives.drawLine(Myr.Color.BLACK, 0, 1, 8, 1);
+
+    return surface;
+};
+
+Bodies.makeShader = (myr, width, height, ramp) => {
+    const shader = new myr.Shader(
         "void main() {" +
             "const mediump vec2 size = vec2(" + width + ", " + height + ");" +
-            "const lowp vec4 colorInner = " + GLSLUtils.colorToVec4(Bodies.COLOR_INNER) + ";" +
-            "const lowp vec4 colorOuter = " + GLSLUtils.colorToVec4(Bodies.COLOR_OUTER) + ";" +
             "lowp vec4 sourcePixel = texture(source, uv);" +
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
             "if (distance < 32.0) {" +
-                "if (distance < 2.0)" +
-                    "color = vec4(vec3(0), sourcePixel.b);" +
-                "else if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
+                "mediump float sampleAt;" +
+                "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(1, -1)).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +
-                    "color = colorOuter * vec4(vec3(1), 0.3);" +
+                    "sampleAt = 1.0;" +
                 "else " +
-                    "color = vec4(mix(colorInner, colorOuter, distance / 32.0) * vec4(vec3(1), 0.3 + 0.6 * sourcePixel.b));" +
+                    "sampleAt = distance / 32.0;" +
+                "color = vec4(texture(colorRamp, vec2(sampleAt, sourcePixel.b)).rgb, 1);" +
             "}" +
             "else " +
                 "color = vec4(0);" +
         "}",
         [
-            "source"
+            "source",
+            "colorRamp"
         ],
         []);
+
+    shader.setSurface("colorRamp", ramp);
+
+    return shader;
 };
 
+Bodies.RAMP_SIZE = 128;
 Bodies.SPAWN_TIME = 2;
 Bodies.COLOR_INNER = StyleUtils.getColor("--color-membrane-inner");
 Bodies.COLOR_OUTER = StyleUtils.getColor("--color-membrane-outer");
