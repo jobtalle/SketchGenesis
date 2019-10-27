@@ -3,7 +3,6 @@ const Liquid = function(myr, grid) {
         this.position = new Myr.Vector(grid.getWidth() * Math.random(), grid.getHeight() * Math.random());
         this.velocity = new Myr.Vector(0, 0);
         this.life = 1;
-        this.angle = 0;
         this.lifeSpeed = 1 / (Liquid.PARTICLE_LIFE_MIN + (Liquid.PARTICLE_LIFE_MAX - Liquid.PARTICLE_LIFE_MIN) * Math.random());
     };
 
@@ -28,7 +27,6 @@ const Liquid = function(myr, grid) {
                     particle.position.y,
                     particle.velocity,
                     Liquid.VELOCITY_MULTIPLIER);
-                particle.angle = -Math.atan2(particle.velocity.y, particle.velocity.x);
             }
 
             particleColorInner.a = Liquid.COLOR_INNER.a * (0.5 * Math.cos((particle.life - 0.5) * Math.PI * 2) + 0.5);

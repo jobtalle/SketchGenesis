@@ -86,15 +86,15 @@ Bodies.makeShader = (myr, width, height, ramp) => {
             "lowp vec4 sourcePixel = texture(source, uv);" +
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
             "if (distance < 32.0) {" +
-                "mediump float sampleAt;" +
+                "lowp float u;" +
                 "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(1, -1)).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +
-                    "sampleAt = 1.0;" +
+                    "u = 1.0;" +
                 "else " +
-                    "sampleAt = distance / 32.0;" +
-                "color = texture(colorRamp, vec2(sampleAt, sourcePixel.b));" +
+                    "u = distance / 32.0;" +
+                "color = texture(colorRamp, vec2(u, sourcePixel.b));" +
             "}" +
             "else " +
                 "color = vec4(0);" +
@@ -113,8 +113,8 @@ Bodies.makeShader = (myr, width, height, ramp) => {
 Bodies.RAMP_SIZE_U = 128;
 Bodies.RAMP_SIZE_V = 32;
 Bodies.SPAWN_TIME = 2;
-Bodies.COLOR_CORE = Myr.Color.BLACK;
-Bodies.COLOR_CORE_DEAD = new Myr.Color(0, 0, 0, 0);
+Bodies.COLOR_CORE = StyleUtils.getColor("--color-core");
+Bodies.COLOR_CORE_DEAD = StyleUtils.getColor("--color-core-dead");
 Bodies.COLOR_INNER = StyleUtils.getColor("--color-membrane-inner");
 Bodies.COLOR_INNER_DEAD = StyleUtils.getColor("--color-membrane-inner-dead");
 Bodies.COLOR_OUTER = StyleUtils.getColor("--color-membrane-outer");
