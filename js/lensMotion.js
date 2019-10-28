@@ -1,4 +1,4 @@
-const LensMotion = function(areaSize, radius, transform) {
+const LensMotion = function(size, padding, radius, transform) {
     const State = function(focus, zoom, angle) {
         this.focus = focus;
         this.zoom = zoom;
@@ -20,6 +20,11 @@ const LensMotion = function(areaSize, radius, transform) {
             this.focus.y = other.focus.y;
             this.zoom = other.zoom;
             this.angle = other.angle;
+
+            if (this.angle > Math.PI + Math.PI)
+                this.angle -= Math.PI + Math.PI;
+            else if (this.angle < 0)
+                this.angle += Math.PI + Math.PI;
         };
     };
 
@@ -38,7 +43,7 @@ const LensMotion = function(areaSize, radius, transform) {
             };
         },
         Rotate: function(delta) {
-            this.getTime = () => delta / Operation.ROTATE_SPEED;
+            this.getTime = () => Math.abs(delta) / Operation.ROTATE_SPEED;
             this.apply = (base, target, time) => {
                 if (time === undefined)
                     time = this.getTime();
@@ -49,7 +54,7 @@ const LensMotion = function(areaSize, radius, transform) {
             };
         },
         Zoom: function(delta) {
-            this.getTime = () => delta / Operation.ZOOM_SPEED;
+            this.getTime = () => Math.abs(delta) / Operation.ZOOM_SPEED;
             this.apply = (base, target, time) => {
                 if (time === undefined)
                     time = this.getTime();
@@ -66,16 +71,21 @@ const LensMotion = function(areaSize, radius, transform) {
     Operation.ZOOM_SPEED = 1;
 
     const operations = [];
-    const stateBase = new State(new Myr.Vector(areaSize * 0.5, areaSize * 0.5), 1, 1);
+    const stateBase = new State(new Myr.Vector(size * 0.5, size * 0.5), 1, 0);
     const state = stateBase.copy();
     let operationTime = 0;
     let operationDelay = LensMotion.OPERATION_DELAY_INITIAL;
+
+    const addOperationRefocus = () => {
+        operations.push(new Operation.Rotate(0.5));
+        operations.push(new Operation.Rotate(-0.15));
+    };
 
     const addOperations = () => {
         if (operations.length !== 0)
             return;
 
-        operations.push(new Operation.Rotate(1));
+        addOperationRefocus();
     };
 
     this.getZoom = () => state.zoom;
@@ -103,6 +113,8 @@ const LensMotion = function(areaSize, radius, transform) {
     };
 };
 
+LensMotion.ZOOM_MIN = 0.5;
+LensMotion.ZOOM_MAX = 2;
 LensMotion.OPERATION_DELAY_INITIAL = 1;
 LensMotion.OPERATION_DELAY_MIN = 5;
 LensMotion.OPERATION_DELAY_MAX = 16;

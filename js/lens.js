@@ -7,7 +7,7 @@ const Lens = function(myr, radius) {
     const x = Math.floor((myr.getWidth() - (radius + radius)) * 0.5);
     const y = Math.floor((myr.getHeight() - (radius + radius)) * 0.5);
     const transform = new Myr.Transform();
-    const motion = new LensMotion(areaSize, radius, transform);
+    const motion = new LensMotion(areaSize, Agent.RADIUS + Agent.MEMBRANE_OFFSET, radius, transform);
 
     this.update = timeStep => {
         motion.update(timeStep);
