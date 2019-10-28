@@ -4,22 +4,31 @@ const Voronoi = function(myr, width, height, maxDistance) {
     const surfaces = [
         new myr.Surface(width, height, 1, false, false),
         new myr.Surface(width, height, 1, false, false)];
+    const transformed = new Myr.Vector(0, 0);
     let front = 0;
     let maxStep = 1;
+    let t = null;
 
-    this.prime = () => {
+    this.prime = transform => {
         surfaces[1 - front].bind();
         surfaces[1 - front].clear();
         surfaces[front].bind();
         surfaces[front].clear();
+
+        t = transform;
     };
 
     this.addSeed = (position, b) => {
-        color.r = position.x / width;
-        color.g = position.y / height;
+        transformed.x = position.x;
+        transformed.y = position.y;
+
+        t.apply(transformed);
+
+        color.r = transformed.x / width;
+        color.g = transformed.y / height;
         color.b = b;
 
-        myr.primitives.drawPoint(color, position.x, position.y);
+        myr.primitives.drawPoint(color, transformed.x, transformed.y);
     };
 
     this.apply = () => {

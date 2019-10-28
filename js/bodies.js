@@ -1,19 +1,22 @@
-const Bodies = function(myr, width, height) {
+const Bodies = function(myr, width, height, workingWidth, workingHeight) {
     const ramp = Bodies.makeRamp(myr);
     const voronoi = new Voronoi(myr, width, height, Agent.RADIUS + Agent.MEMBRANE_OFFSET);
     const shader = Bodies.makeShader(myr, width, height, ramp);
-    const grid = new Grid(width, height);
-    const liquid = new Liquid(myr, grid);
+    const grid = new Grid(workingWidth, workingHeight);
+    const liquid = new Liquid(myr, width, height, grid);
     const agents = [];
     let spawnTime = 0;
+
+    let t; // TODO: Debug matrix for rendering
 
     const spawn = agent => {
         agents.push(agent);
     };
 
-    this.update = timeStep => {
+    this.update = (timeStep, transform) => {
+        t = transform;
         grid.update(timeStep);
-        liquid.update(timeStep);
+        liquid.update(timeStep, transform);
 
         if ((spawnTime -= timeStep) < 0) {
             spawnTime += Bodies.SPAWN_TIME;
@@ -29,7 +32,7 @@ const Bodies = function(myr, width, height) {
 
         grid.populate(agents);
 
-        voronoi.prime();
+        voronoi.prime(transform);
 
         for (const agent of agents)
             voronoi.addSeed(agent.position, agent.getLife());
@@ -39,6 +42,12 @@ const Bodies = function(myr, width, height) {
 
     this.draw = () => {
         liquid.draw();
+
+        myr.push();
+        myr.transform(t);
+        grid.draw(myr);
+        myr.pop();
+
         shader.setSurface("source", voronoi.getSurface());
         shader.draw(0, 0);
     };
@@ -47,13 +56,14 @@ const Bodies = function(myr, width, height) {
         voronoi.free();
         shader.free();
         ramp.free();
+        liquid.free();
     };
 
-    spawn(new Agent(new Myr.Vector(width * 0.5, height * 0.5)));
+    spawn(new Agent(new Myr.Vector(workingWidth * 0.5, workingHeight * 0.5)));
 };
 
 Bodies.makeRamp = myr => {
-    const surface = new myr.Surface(Bodies.RAMP_SIZE_U, Bodies.RAMP_SIZE_V, 0, true, false);
+    const surface = new myr.Surface(Bodies.RAMP_SIZE_U, Bodies.RAMP_SIZE_V);
     const xCore = surface.getWidth() * Bodies.RADIUS_CORE / (Agent.RADIUS + Agent.MEMBRANE_OFFSET);
     const xBorder = surface.getWidth() * (1 - Bodies.RADIUS_BORDER / (Agent.RADIUS + Agent.MEMBRANE_OFFSET));
 

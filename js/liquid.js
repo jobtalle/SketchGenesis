@@ -1,4 +1,4 @@
-const Liquid = function(myr, grid) {
+const Liquid = function(myr, width, height, grid) {
     const Particle = function() {
         this.position = new Myr.Vector(grid.getWidth() * Math.random(), grid.getHeight() * Math.random());
         this.velocity = new Myr.Vector(0, 0);
@@ -8,11 +8,12 @@ const Liquid = function(myr, grid) {
 
     const particleColorInner = Liquid.COLOR_INNER.copy();
     const particles = new Array(Math.ceil(grid.getWidth() * grid.getHeight() * Liquid.PARTICLES_PER_PIXEL));
-    const surface = new myr.Surface(grid.getWidth(), grid.getHeight());
+    const surface = new myr.Surface(width, height);
 
-    this.update = timeStep => {
+    this.update = (timeStep, transform) => {
         surface.bind();
         surface.clear();
+        myr.transform(transform);
 
         for (const particle of particles) {
             particle.position.add(particle.velocity);
