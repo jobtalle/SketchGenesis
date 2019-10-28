@@ -54,26 +54,37 @@ const Bodies = function(myr, width, height) {
 
 Bodies.makeRamp = myr => {
     const surface = new myr.Surface(Bodies.RAMP_SIZE_U, Bodies.RAMP_SIZE_V, 0, true, false);
+    const xCore = surface.getWidth() * Bodies.RADIUS_CORE / (Agent.RADIUS + Agent.MEMBRANE_OFFSET);
+    const xBorder = surface.getWidth() * (1 - Bodies.RADIUS_BORDER / (Agent.RADIUS + Agent.MEMBRANE_OFFSET));
 
     surface.bind();
 
+    myr.primitives.fillRectangleGradient(
+        Bodies.COLOR_CORE_DEAD,
+        Bodies.COLOR_CORE_DEAD,
+        Bodies.COLOR_CORE,
+        Bodies.COLOR_CORE,
+        0,
+        0,
+        xCore,
+        surface.getHeight());
     myr.primitives.fillRectangleGradient(
         Bodies.COLOR_INNER_DEAD,
         Bodies.COLOR_OUTER_DEAD,
         Bodies.COLOR_INNER,
         Bodies.COLOR_OUTER,
+        xCore,
         0,
-        0,
-        surface.getWidth(),
+        xBorder - xCore,
         surface.getHeight());
     myr.primitives.fillRectangleGradient(
-        Bodies.COLOR_CORE_DEAD,
-        Bodies.COLOR_CORE_DEAD,
-        Bodies.COLOR_CORE,
-        Bodies.COLOR_CORE,
+        Bodies.COLOR_BORDER_DEAD,
+        Bodies.COLOR_BORDER_DEAD,
+        Bodies.COLOR_BORDER,
+        Bodies.COLOR_BORDER,
+        xBorder,
         0,
-        0,
-        8,
+        surface.getWidth() - xBorder,
         surface.getHeight());
 
     return surface;
@@ -83,9 +94,10 @@ Bodies.makeShader = (myr, width, height, ramp) => {
     const shader = new myr.Shader(
         "void main() {" +
             "const mediump vec2 size = vec2(" + width + ", " + height + ");" +
+            "const mediump float radius = " + (Agent.RADIUS + Agent.MEMBRANE_OFFSET).toFixed(2) + ";" +
             "lowp vec4 sourcePixel = texture(source, uv);" +
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
-            "if (distance < 32.0) {" +
+            "if (distance < radius) {" +
                 "lowp float u;" +
                 "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
@@ -93,7 +105,7 @@ Bodies.makeShader = (myr, width, height, ramp) => {
                 "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +
                     "u = 1.0;" +
                 "else " +
-                    "u = distance / 32.0;" +
+                    "u = distance / radius;" +
                 "color = texture(colorRamp, vec2(u, sourcePixel.b));" +
             "}" +
             "else " +
@@ -113,8 +125,12 @@ Bodies.makeShader = (myr, width, height, ramp) => {
 Bodies.RAMP_SIZE_U = 128;
 Bodies.RAMP_SIZE_V = 32;
 Bodies.SPAWN_TIME = 2;
+Bodies.RADIUS_CORE = 2;
+Bodies.RADIUS_BORDER = 2.5;
 Bodies.COLOR_CORE = StyleUtils.getColor("--color-core");
 Bodies.COLOR_CORE_DEAD = StyleUtils.getColor("--color-core-dead");
+Bodies.COLOR_BORDER = StyleUtils.getColor("--color-membrane-border");
+Bodies.COLOR_BORDER_DEAD = StyleUtils.getColor("--color-membrane-border-dead");
 Bodies.COLOR_INNER = StyleUtils.getColor("--color-membrane-inner");
 Bodies.COLOR_INNER_DEAD = StyleUtils.getColor("--color-membrane-inner-dead");
 Bodies.COLOR_OUTER = StyleUtils.getColor("--color-membrane-outer");

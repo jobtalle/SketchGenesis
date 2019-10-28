@@ -111,7 +111,6 @@ Agent.makeDivisionTime = divisions => {
 };
 
 Agent.COLOR_MEMBRANE_LOW = new Myr.Color(0, 0, 0, 0);
-Agent.MEMBRANE_OFFSET = 14;
 Agent.DEATH_FADE = 5;
 Agent.DIVISIONS_MIN = 32;
 Agent.DIVISIONS_MAX = 128;
@@ -120,6 +119,7 @@ Agent.DAMPING_ALIVE = 0.05;
 Agent.DAMPING_DEAD = 0.015;
 Agent.RADIUS = 24;
 Agent.ATTRACTION_RADIUS = 9;
+Agent.MEMBRANE_OFFSET = Agent.ATTRACTION_RADIUS;
 Agent.DIVISION_TIME_MIN = 2;
 Agent.DIVISION_TIME_MAX = 8;
 Agent.DEAD_TIME_MIN = 30;

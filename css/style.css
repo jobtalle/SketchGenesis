@@ -1,11 +1,13 @@
 :root {
     --color-background: #ad9d81;
-    --color-membrane-inner: #ffffff55;
-    --color-membrane-outer: #4c753bff;
-    --color-membrane-inner-dead: #ffffff44;
-    --color-membrane-outer-dead: #777777cc;
     --color-core: #151515ff;
+    --color-membrane-inner: #ffffff55;
+    --color-membrane-outer: #568543dd;
+    --color-membrane-border: #314c26ee;
     --color-core-dead: #15151500;
+    --color-membrane-inner-dead: #ffffff11;
+    --color-membrane-outer-dead: #777777cc;
+    --color-membrane-border-dead: #00000066;
     --color-liquid-particles: #4c753b;
 }
 
