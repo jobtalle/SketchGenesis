@@ -13,7 +13,7 @@ const Lens = function(myr, radius) {
         motion.update(timeStep);
         bodies.update(timeStep, transform);
         surface.bind();
-        bodies.draw();
+        bodies.draw(motion.getZoom());
 
         //myr.primitives.drawCircle(Myr.Color.RED, radius, radius, radius);
     };

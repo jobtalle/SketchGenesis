@@ -40,7 +40,7 @@ const Bodies = function(myr, width, height, workingWidth, workingHeight) {
         voronoi.apply();
     };
 
-    this.draw = () => {
+    this.draw = zoom => {
         liquid.draw();
 
         myr.push();
@@ -49,6 +49,7 @@ const Bodies = function(myr, width, height, workingWidth, workingHeight) {
         myr.pop();
 
         shader.setSurface("source", voronoi.getSurface());
+        shader.setVariable("zoom", zoom);
         shader.draw(0, 0);
     };
 
@@ -104,7 +105,7 @@ Bodies.makeShader = (myr, width, height, ramp) => {
     const shader = new myr.Shader(
         "void main() {" +
             "const mediump vec2 size = vec2(" + width + ", " + height + ");" +
-            "const mediump float radius = " + (Agent.RADIUS + Agent.MEMBRANE_OFFSET).toFixed(2) + ";" +
+            "mediump float radius = " + (Agent.RADIUS + Agent.MEMBRANE_OFFSET).toFixed(2) + " * zoom;" +
             "lowp vec4 sourcePixel = texture(source, uv);" +
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
             "if (distance < radius) {" +
@@ -125,7 +126,9 @@ Bodies.makeShader = (myr, width, height, ramp) => {
             "source",
             "colorRamp"
         ],
-        []);
+        [
+            "zoom"
+        ]);
 
     shader.setSurface("colorRamp", ramp);
 

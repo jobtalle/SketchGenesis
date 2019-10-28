@@ -78,11 +78,13 @@ const LensMotion = function(areaSize, radius, transform) {
         operations.push(new Operation.Rotate(1));
     };
 
+    this.getZoom = () => state.zoom;
+
     this.update = timeStep => {
         state.apply(radius, transform);
 
         if ((operationDelay -= timeStep) < 0) {
-            operationDelay = Lens.OPERATION_DELAY_MIN + (Lens.OPERATION_DELAY_MAX - Lens.OPERATION_DELAY_MIN) * Math.random();
+            operationDelay = LensMotion.OPERATION_DELAY_MIN + (LensMotion.OPERATION_DELAY_MAX - LensMotion.OPERATION_DELAY_MIN) * Math.random();
 
             addOperations();
         }
