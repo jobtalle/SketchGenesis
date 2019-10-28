@@ -141,8 +141,8 @@ const LensMotion = function(size, padding, radius, transform) {
     };
 };
 
-LensMotion.ZOOM_MIN = 0.5;
-LensMotion.ZOOM_MAX = 2;
+LensMotion.ZOOM_MIN = 0.75;
+LensMotion.ZOOM_MAX = 1.5;
 LensMotion.ZOOM_DELTA_MIN = -0.5;
 LensMotion.ZOOM_DELTA_MAX = 0.5;
 LensMotion.ANGLE_DELTA_MIN = -1.3;
