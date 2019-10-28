@@ -7,21 +7,39 @@ const Bodies = function(myr, width, height, workingWidth, workingHeight) {
     const agents = [];
     let spawnTime = 0;
 
-    let t; // TODO: Debug matrix for rendering
-
     const spawn = agent => {
         agents.push(agent);
     };
 
+    const findSpawnLocation = transform => {
+        const radius = Math.max(width, height) * 0.5; // TODO: Add padding
+        const vector = new Myr.Vector(0, 0);
+        const transformed = new Myr.Vector(0, 0);
+
+        for (let i = 0; i < Bodies.SPAWN_ATTEMPTS; ++i) {
+            transformed.x = vector.x = Math.random() * workingWidth;
+            transformed.y = vector.y = Math.random() * workingHeight;
+
+            transform.apply(transformed);
+
+            transformed.x -= radius;
+            transformed.y -= radius;
+
+            if (transformed.length() > radius)
+                return vector;
+        }
+
+        return null;
+    };
+
     this.update = (timeStep, transform) => {
-        t = transform;
         grid.update(timeStep);
         liquid.update(timeStep, transform);
 
         if ((spawnTime -= timeStep) < 0) {
             spawnTime += Bodies.SPAWN_TIME;
 
-            const position = grid.findSpawnLocation();
+            const position = findSpawnLocation(transform);
 
             if (position)
                 spawn(new Agent(position, 32));
@@ -42,12 +60,6 @@ const Bodies = function(myr, width, height, workingWidth, workingHeight) {
 
     this.draw = zoom => {
         liquid.draw();
-
-        myr.push();
-        myr.transform(t);
-        grid.draw(myr);
-        myr.pop();
-
         shader.setSurface("source", voronoi.getSurface());
         shader.setVariable("zoom", zoom);
         shader.draw(0, 0);
@@ -135,6 +147,7 @@ Bodies.makeShader = (myr, width, height, ramp) => {
     return shader;
 };
 
+Bodies.SPAWN_ATTEMPTS = 10;
 Bodies.RAMP_SIZE_U = 128;
 Bodies.RAMP_SIZE_V = 32;
 Bodies.SPAWN_TIME = 2;

@@ -33,45 +33,6 @@ const Grid = function(width, height) {
         return flow;
     };
 
-    this.findSpawnLocation = () => {
-        const flowDirection = new Myr.Vector(0, 0);
-        const location = new Myr.Vector(0, 0);
-
-        for (let i = 0; i < Grid.LOCATION_ATTEMPTS; ++i) {
-            if (Math.random() < 0.5) {
-                location.x = Math.random() * width;
-
-                if (Math.random() < 0.5)
-                    location.y = 0;
-                else
-                    location.y = height - 0.001;
-            }
-            else {
-                location.y = Math.random() * height;
-
-                if (Math.random() < 0.5)
-                    location.x = 0;
-                else
-                    location.x = width - 0.001;
-            }
-
-            flowDirection.x = flowDirection.y = 0;
-            flow.apply(location.x, location.y, flowDirection, 1);
-            flowDirection.normalize();
-            location.add(flowDirection);
-
-            if (location.x < 0 ||
-                location.y < 0 ||
-                location.x >= width ||
-                location.y >= height)
-                continue;
-
-            return location;
-        }
-
-        return null;
-    };
-
     this.populate = agents => {
         clear();
 
@@ -164,4 +125,3 @@ const Grid = function(width, height) {
 
 Grid.RESOLUTION = Agent.RADIUS * 2;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;
-Grid.LOCATION_ATTEMPTS = 10;
