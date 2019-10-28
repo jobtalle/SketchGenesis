@@ -31,37 +31,38 @@ const LensMotion = function(size, padding, radius, transform) {
     const Operation = {
         Translate: function(delta) {
             const length = delta.length();
+            const direction = delta.copy();
+
+            direction.normalize();
 
             this.getTime = () => length / Operation.TRANSLATE_SPEED;
             this.apply = (base, target, time) => {
-                if (time === undefined)
-                    time = this.getTime();
-
-                target.focus = base.focus;
-                target.zoom = base.zoom;
-                target.angle = base.angle;
+                if (time === undefined) {
+                    target.focus.x = base.focus.x + delta.x;
+                    target.focus.y = base.focus.y + delta.y;
+                }
+                else {
+                    target.focus.x = base.focus.x + time * Operation.TRANSLATE_SPEED * direction.x;
+                    target.focus.y = base.focus.y + time * Operation.TRANSLATE_SPEED * direction.y;
+                }
             };
         },
         Rotate: function(delta) {
             this.getTime = () => Math.abs(delta) / Operation.ROTATE_SPEED;
             this.apply = (base, target, time) => {
                 if (time === undefined)
-                    time = this.getTime();
-
-                target.focus = base.focus;
-                target.zoom = base.zoom;
-                target.angle = base.angle + time * Operation.ROTATE_SPEED * delta;
+                    target.angle = base.angle + delta;
+                else
+                    target.angle = base.angle + time * Operation.ROTATE_SPEED * Math.sign(delta);
             };
         },
         Zoom: function(delta) {
             this.getTime = () => Math.abs(delta) / Operation.ZOOM_SPEED;
             this.apply = (base, target, time) => {
                 if (time === undefined)
-                    time = this.getTime();
-
-                target.focus = base.focus;
-                target.zoom = base.zoom;
-                target.angle = base.angle;
+                    target.zoom = base.zoom + delta;
+                else
+                    target.zoom = base.zoom + time * Operation.ZOOM_SPEED * Math.sign(delta);
             };
         }
     };
@@ -77,8 +78,31 @@ const LensMotion = function(size, padding, radius, transform) {
     let operationDelay = LensMotion.OPERATION_DELAY_INITIAL;
 
     const addOperationRefocus = () => {
-        operations.push(new Operation.Rotate(0.5));
-        operations.push(new Operation.Rotate(-0.15));
+        const angleDelta = LensMotion.ANGLE_DELTA_MIN + (LensMotion.ANGLE_DELTA_MAX - LensMotion.ANGLE_DELTA_MIN) * Math.random();
+        const focusDelta = new Myr.Vector(0, 0);
+        let zoomDelta = LensMotion.ZOOM_DELTA_MIN + (LensMotion.ZOOM_DELTA_MAX - LensMotion.ZOOM_DELTA_MIN) * Math.random();
+
+        if (stateBase.zoom + zoomDelta < LensMotion.ZOOM_MIN ||
+            stateBase.zoom + zoomDelta > LensMotion.ZOOM_MAX)
+            zoomDelta = -zoomDelta;
+
+        const focusPadding = padding + radius / (stateBase.zoom + zoomDelta);
+        const focusX = focusPadding + (size - focusPadding - focusPadding) * Math.random();
+        const focusY = focusPadding + (size - focusPadding - focusPadding) * Math.random();
+
+        focusDelta.x = focusX - stateBase.focus.x;
+        focusDelta.y = focusY - stateBase.focus.y;
+
+        if (zoomDelta < 0) {
+            operations.push(new Operation.Translate(focusDelta));
+            operations.push(new Operation.Zoom(zoomDelta));
+        }
+        else {
+            operations.push(new Operation.Zoom(zoomDelta));
+            operations.push(new Operation.Translate(focusDelta));
+        }
+
+        operations.push(new Operation.Rotate(angleDelta));
     };
 
     const addOperations = () => {
@@ -115,6 +139,10 @@ const LensMotion = function(size, padding, radius, transform) {
 
 LensMotion.ZOOM_MIN = 0.5;
 LensMotion.ZOOM_MAX = 2;
+LensMotion.ZOOM_DELTA_MIN = -0.5;
+LensMotion.ZOOM_DELTA_MAX = 0.5;
+LensMotion.ANGLE_DELTA_MIN = -1;
+LensMotion.ANGLE_DELTA_MAX = 1;
 LensMotion.OPERATION_DELAY_INITIAL = 1;
 LensMotion.OPERATION_DELAY_MIN = 5;
 LensMotion.OPERATION_DELAY_MAX = 16;
