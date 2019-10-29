@@ -1,6 +1,6 @@
-const Bodies = function(myr, width, height, workingWidth, workingHeight) {
+const Bodies = function(myr, width, height, padding, workingWidth, workingHeight) {
     const ramp = Bodies.makeRamp(myr);
-    const voronoi = new Voronoi(myr, width, height, Agent.RADIUS + Agent.MEMBRANE_OFFSET);
+    const voronoi = new Voronoi(myr, width, height, padding);
     const shader = Bodies.makeShader(myr, width, height, ramp);
     const grid = new Grid(workingWidth, workingHeight);
     const liquid = new Liquid(myr, width, height, grid);
@@ -62,7 +62,7 @@ const Bodies = function(myr, width, height, workingWidth, workingHeight) {
         liquid.draw();
         shader.setSurface("source", voronoi.getSurface());
         shader.setVariable("zoom", zoom);
-        shader.draw(0, 0);
+        shader.draw(-voronoi.getMaxDistance(), -voronoi.getMaxDistance());
     };
 
     this.free = () => {

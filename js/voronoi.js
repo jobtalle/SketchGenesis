@@ -1,4 +1,7 @@
 const Voronoi = function(myr, width, height, maxDistance) {
+    width += maxDistance * 2;
+    height += maxDistance * 2;
+
     const color = new Myr.Color(0, 0, 1, 1);
     const shader = Voronoi.makeShader(myr, width, height);
     const surfaces = [
@@ -8,6 +11,8 @@ const Voronoi = function(myr, width, height, maxDistance) {
     let front = 0;
     let maxStep = 1;
     let t = null;
+
+    this.getMaxDistance = () => maxDistance;
 
     this.prime = transform => {
         surfaces[1 - front].bind();
@@ -24,11 +29,14 @@ const Voronoi = function(myr, width, height, maxDistance) {
 
         t.apply(transformed);
 
-        color.r = transformed.x / width;
-        color.g = transformed.y / height;
+        color.r = (transformed.x + maxDistance) / width;
+        color.g = (transformed.y + maxDistance) / height;
         color.b = b;
 
-        myr.primitives.drawPoint(color, transformed.x, transformed.y);
+        myr.primitives.drawPoint(
+            color,
+            transformed.x + maxDistance,
+            transformed.y + maxDistance);
     };
 
     this.apply = () => {

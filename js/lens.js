@@ -1,6 +1,7 @@
 const Lens = function(myr, radius) {
     const areaSize = (radius + radius) * Lens.WORKING_AREA_MULTIPLIER + (Agent.RADIUS + Agent.MEMBRANE_OFFSET) * 2;
-    const bodies = new Bodies(myr, radius + radius, radius + radius, areaSize, areaSize);
+    const projectionPadding = Math.ceil((Agent.RADIUS + Agent.MEMBRANE_OFFSET) * LensMotion.ZOOM_MAX);
+    const bodies = new Bodies(myr, radius + radius, radius + radius, projectionPadding, areaSize, areaSize);
     const surface = new myr.Surface(radius + radius, radius + radius, 0, true, false);
     const displacement = Lens.makeDisplacement(myr, radius + radius);
     const shader = Lens.makeShader(myr, surface, displacement, radius + radius);
@@ -12,6 +13,7 @@ const Lens = function(myr, radius) {
     this.update = timeStep => {
         motion.update(timeStep);
         bodies.update(timeStep, transform);
+
         surface.bind();
         bodies.draw(motion.getZoom());
 
