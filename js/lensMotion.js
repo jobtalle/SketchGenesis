@@ -1,4 +1,4 @@
-const LensMotion = function(size, padding, radius, transform) {
+const LensMotion = function(size, padding, radius, transform, grid) {
     const State = function(focus, zoom, angle) {
         this.focus = focus;
         this.zoom = zoom;
@@ -88,14 +88,36 @@ const LensMotion = function(size, padding, radius, transform) {
 
         const focusPadding = padding + radius / (stateBase.zoom + zoomDelta);
         const focusLimit = LensMotion.FOCUS_DELTA_MAX / (stateBase.zoom + zoomDelta);
-        const focusX = focusPadding + (size - focusPadding - focusPadding) * Math.random();
-        const focusY = focusPadding + (size - focusPadding - focusPadding) * Math.random();
+        const centroids = grid.getCentroids();
+        let focusX, focusY;
+
+        for (let i = centroids.length; i-- > 0;) {
+            const centroid = centroids[i];
+
+            if (centroid.x < focusPadding ||
+                centroid.y < focusPadding ||
+                centroid.x > size - focusPadding * 2 ||
+                centroid.y > size - focusPadding * 2)
+                centroids.splice(i, 1);
+        }
+
+        if (centroids.length === 0) {
+            focusX = focusPadding + (size - focusPadding - focusPadding) * Math.random();
+            focusY = focusPadding + (size - focusPadding - focusPadding) * Math.random();
+        }
+        else {
+            focusX = centroids[0].x;
+            focusY = centroids[0].y;
+        }
 
         focusDelta.x = focusX - stateBase.focus.x;
         focusDelta.y = focusY - stateBase.focus.y;
 
+        // TODO: Enforce this again:
+        /*
         if (focusDelta.length() > focusLimit)
             focusDelta.multiply(focusLimit / focusDelta.length());
+         */
 
         if (zoomDelta < 0) {
             operations.push(new Operation.Focus(focusDelta));

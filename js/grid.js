@@ -44,13 +44,14 @@ const Grid = function(width, height) {
 
                 if (influence !== 0) {
                     mean.divide(influence);
+                    mean.influence = influence;
 
                     centroids.push(mean);
                 }
             }
         }
 
-        console.log(centroids);
+        return centroids.sort((a, b) => b.influence - a.influence);
     };
 
     this.getWidth = () => {

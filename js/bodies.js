@@ -34,6 +34,8 @@ const Bodies = function(myr, width, height, padding, workingWidth, workingHeight
         return null;
     };
 
+    this.getGrid = () => grid;
+
     this.update = (timeStep, transform) => {
         grid.update(timeStep);
         liquid.update(timeStep, transform);
