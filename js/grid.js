@@ -21,6 +21,38 @@ const Grid = function(width, height) {
         return cells[x + y * xCells];
     };
 
+    this.getCentroids = () => {
+        const centroids = [];
+        const centroidCells = Math.ceil(Grid.CENTROID_SPACING * Grid.RESOLUTION_INVERSE);
+
+        for (let yStart = 0; yStart < yCells; yStart += centroidCells) {
+            for (let xStart = 0; xStart < xCells; xStart += centroidCells) {
+                const xEnd = Math.min(xCells, xStart + centroidCells);
+                const yEnd = Math.min(yCells, yStart + centroidCells);
+                const mean = new Myr.Vector(0, 0);
+                let influence = 0;
+
+                for (let y = yStart; y < yEnd; ++y) for (let x = xStart; x < xEnd; ++x) {
+                    const cell = get(x, y);
+
+                    for (let i = 0; i < cell.agentCount; ++i) {
+                        mean.x += cell.agents[i].position.x;
+                        mean.y += cell.agents[i].position.y;
+                        influence += 1;
+                    }
+                }
+
+                if (influence !== 0) {
+                    mean.divide(influence);
+
+                    centroids.push(mean);
+                }
+            }
+        }
+
+        console.log(centroids);
+    };
+
     this.getWidth = () => {
         return width;
     };
@@ -125,3 +157,4 @@ const Grid = function(width, height) {
 
 Grid.RESOLUTION = Agent.RADIUS * 2;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;
+Grid.CENTROID_SPACING = 300;

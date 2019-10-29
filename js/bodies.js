@@ -12,7 +12,9 @@ const Bodies = function(myr, width, height, padding, workingWidth, workingHeight
     };
 
     const findSpawnLocation = transform => {
-        const radius = Math.max(width, height) * 0.5; // TODO: Add padding
+        grid.getCentroids(); // TODO: Debug
+
+        const radius = Math.max(width, height) * 0.5 + padding;
         const vector = new Myr.Vector(0, 0);
         const transformed = new Myr.Vector(0, 0);
 
