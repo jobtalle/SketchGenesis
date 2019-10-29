@@ -21,6 +21,8 @@ const Agent = function(position, divisions = Agent.makeDivisionCount(), parent =
         spawn(new Agent(childPosition, divisions, this));
     };
 
+    this.getDivisions = () => divisions;
+
     this.collide = (agent, timeStep) => {
         const dx = this.position.x - agent.position.x;
         const dy = this.position.y - agent.position.y;

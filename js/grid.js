@@ -36,9 +36,11 @@ const Grid = function(width, height) {
                     const cell = get(x, y);
 
                     for (let i = 0; i < cell.agentCount; ++i) {
-                        mean.x += cell.agents[i].position.x;
-                        mean.y += cell.agents[i].position.y;
-                        influence += 1;
+                        const weight = Math.pow(cell.agents[i].getDivisions(), Grid.CENTROID_POWER);
+
+                        mean.x += cell.agents[i].position.x * weight;
+                        mean.y += cell.agents[i].position.y * weight;
+                        influence += weight;
                     }
                 }
 
@@ -159,3 +161,4 @@ const Grid = function(width, height) {
 Grid.RESOLUTION = Agent.RADIUS * 2;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;
 Grid.CENTROID_SPACING = 300;
+Grid.CENTROID_POWER = 1.3;
