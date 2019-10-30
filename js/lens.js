@@ -147,7 +147,7 @@ Lens.makeShader = (myr, surface, displacement) => {
 };
 
 Lens.RESOLUTION = 0.65;
-Lens.CUTOFF = 0.8;
+Lens.CUTOFF = 0.85;
 Lens.WORKING_AREA_MULTIPLIER = 2;
 Lens.COLOR_BACKGROUND = StyleUtils.getColor("--color-background");
 Lens.FLATNESS = 1;

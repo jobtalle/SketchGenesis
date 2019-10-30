@@ -68,8 +68,8 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid, 
         }
     };
 
-    Operation.TRANSLATE_SPEED = 500;
-    Operation.ROTATE_SPEED = 1.3;
+    Operation.TRANSLATE_SPEED = 450;
+    Operation.ROTATE_SPEED = 1.1;
     Operation.ZOOM_SPEED = 1;
 
     const operations = [];
@@ -147,7 +147,7 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid, 
             if ((operationTime += timeStep) > operations[0].getTime()) {
                 const operation = operations.shift();
 
-                operationTime -= operation.getTime();
+                operationTime = 0;
                 operation.apply(stateBase, stateBase);
                 state.set(stateBase);
             }
