@@ -2,6 +2,7 @@ const Liquid = function(myr, width, height, grid) {
     const Particle = function() {
         this.position = new Myr.Vector(grid.getWidth() * Math.random(), grid.getHeight() * Math.random());
         this.velocity = new Myr.Vector(0, 0);
+        this.radius = Liquid.PARTICLE_RADIUS_MIN + (Liquid.PARTICLE_RADIUS_MAX - Liquid.PARTICLE_RADIUS_MIN) * Math.random();
         this.life = 1;
         this.lifeSpeed = 1 / (Liquid.PARTICLE_LIFE_MIN + (Liquid.PARTICLE_LIFE_MAX - Liquid.PARTICLE_LIFE_MIN) * Math.random());
     };
@@ -37,7 +38,7 @@ const Liquid = function(myr, width, height, grid) {
                 Liquid.COLOR_OUTER,
                 particle.position.x,
                 particle.position.y,
-                5);
+                particle.radius);
         }
     };
 
@@ -58,6 +59,8 @@ const Liquid = function(myr, width, height, grid) {
 Liquid.CLEAR_COLOR = StyleUtils.getColor("--color-liquid");
 Liquid.PARTICLE_LIFE_MIN = 2;
 Liquid.PARTICLE_LIFE_MAX = 4;
+Liquid.PARTICLE_RADIUS_MIN = 3;
+Liquid.PARTICLE_RADIUS_MAX = 7;
 Liquid.VELOCITY_MULTIPLIER = 0.003;
 Liquid.COLOR_INNER = StyleUtils.getColor("--color-liquid-particles");
 Liquid.COLOR_OUTER = new Myr.Color(Liquid.COLOR_INNER.r, Liquid.COLOR_INNER.g, Liquid.COLOR_INNER.b, 0);
