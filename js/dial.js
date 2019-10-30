@@ -7,7 +7,12 @@ const Dial = function(element, radius) {
         while (element.firstChild)
             element.removeChild(element.firstChild);
 
-        element.appendChild(SVGUtils.drawCircle(0, 0, radius + thickness * 0.5, thickness,"gray"));
+        element.appendChild(SVGUtils.drawCircle(
+            0,
+            0,
+            radius + thickness * 0.5,
+            thickness,
+            Dial.RING_COLOR));
 
         for (let i = 0; i < ticks; ++i) {
             const angle = Math.PI * 2 * i / ticks;
@@ -20,8 +25,15 @@ const Dial = function(element, radius) {
                 c * (radius + thickness * (1 - Dial.TICK_LENGTH)),
                 s * (radius + thickness * (1 - Dial.TICK_LENGTH)),
                 Dial.TICK_THICKNESS,
-                "white"));
+                Dial.TICK_COLOR));
         }
+
+        element.appendChild(SVGUtils.drawCircle(
+            0,
+            0,
+            radius + thickness + Dial.BORDER_THICKNESS * 0.5 - 1,
+            Dial.BORDER_THICKNESS,
+            Dial.BORDER_COLOR));
     };
 
     this.setAngle = angle => {
@@ -31,8 +43,12 @@ const Dial = function(element, radius) {
     build();
 };
 
-Dial.RING_THICKNESS = 0.1;
 Dial.ANGLE_FACTOR = 0.1;
+Dial.RING_THICKNESS = 0.15;
+Dial.RING_COLOR = StyleUtils.getVariable("--color-dial-ring");
+Dial.BORDER_COLOR = StyleUtils.getVariable("--color-dial-ring-border");
+Dial.BORDER_THICKNESS = 8;
 Dial.TICK_THICKNESS = 2;
-Dial.TICK_LENGTH = 0.7;
+Dial.TICK_LENGTH = 0.65;
 Dial.TICK_SPACING = 32;
+Dial.TICK_COLOR = StyleUtils.getVariable("--color-dial-tick");
