@@ -1,7 +1,9 @@
 const TIME_STEP_MAX = 0.1;
 const COLOR_CLEAR = StyleUtils.getColor("--color-background");
+const SIZE_FACTOR = 0.75;
 
 const wrapper = document.getElementById("wrapper");
+const centered = document.getElementById("centered");
 const canvas = document.getElementById("renderer");
 let myr = new Myr(canvas, false);
 let lastDate = new Date();
@@ -11,10 +13,15 @@ const resize = () => {
     if (genesis)
         genesis.free();
 
-    canvas.width = wrapper.offsetWidth;
-    canvas.height = wrapper.offsetHeight;
+    const radius = Math.ceil(Math.min(wrapper.offsetWidth, wrapper.offsetHeight) * 0.5 * SIZE_FACTOR);
+    const diameter = radius + radius;
+
+    centered.style.left = Math.round(0.5 * (wrapper.offsetWidth - diameter)) + "px";
+    centered.style.top = Math.round(0.5 * (wrapper.offsetHeight - diameter)) + "px";
+    canvas.width = radius + radius;
+    canvas.height = radius + radius;
     myr = new Myr(canvas, false);
-    genesis = new Genesis(myr, canvas.width * 0.76, canvas.height * 0.76);
+    genesis = new Genesis(myr);
 };
 
 const update = timeStep => {
