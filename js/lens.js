@@ -154,5 +154,5 @@ Lens.FLATNESS = 1;
 Lens.FLARE_THRESHOLD = 0.5;
 Lens.FLARE_POWER = 6;
 Lens.FLARE_COLOR = StyleUtils.getColor("--color-flare");
-Lens.BORDER_POWER = 2;
+Lens.BORDER_POWER = 1.7;
 Lens.BORDER_INFLUENCE = 0.9;

@@ -25,9 +25,16 @@ const Dial = function(element, radius) {
                 c * (radius + thickness * (1 - Dial.TICK_LENGTH)),
                 s * (radius + thickness * (1 - Dial.TICK_LENGTH)),
                 Dial.TICK_THICKNESS,
-                Dial.TICK_COLOR));
+                Dial.TICK_COLOR,
+                "round"));
         }
 
+        element.appendChild(SVGUtils.drawCircle(
+            0,
+            0,
+            radius + Dial.SHADE_THICKNESS * 0.5,
+            Dial.SHADE_THICKNESS,
+            Dial.SHADE_COLOR));
         element.appendChild(SVGUtils.drawCircle(
             0,
             0,
@@ -37,18 +44,19 @@ const Dial = function(element, radius) {
     };
 
     this.setAngle = angle => {
-        element.style.transform = "rotate(" + (angle) + "rad)";
+        element.style.transform = "rotate(" + angle + "rad)";
     };
 
     build();
 };
 
-Dial.ANGLE_FACTOR = 0.1;
-Dial.RING_THICKNESS = 0.15;
+Dial.RING_THICKNESS = 0.12;
 Dial.RING_COLOR = StyleUtils.getVariable("--color-dial-ring");
 Dial.BORDER_COLOR = StyleUtils.getVariable("--color-dial-ring-border");
-Dial.BORDER_THICKNESS = 8;
-Dial.TICK_THICKNESS = 2;
-Dial.TICK_LENGTH = 0.65;
-Dial.TICK_SPACING = 32;
+Dial.BORDER_THICKNESS = 6;
+Dial.SHADE_COLOR = StyleUtils.getVariable("--color-dial-shade");
+Dial.SHADE_THICKNESS = 1.5;
+Dial.TICK_THICKNESS = Dial.BORDER_THICKNESS;
+Dial.TICK_LENGTH = 0.3;
+Dial.TICK_SPACING = 28;
 Dial.TICK_COLOR = StyleUtils.getVariable("--color-dial-tick");

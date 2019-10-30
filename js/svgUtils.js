@@ -11,12 +11,15 @@ const SVGUtils = {
 
         return element;
     },
-    drawLine: function(x1, y1, x2, y2, thickness, color) {
+    drawLine: function(x1, y1, x2, y2, thickness, color, linecap) {
         const element = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
         element.setAttribute("stroke", color);
         element.setAttribute("stroke-width", thickness);
         element.setAttributeNS(null, "d", "M" + x1 + " " + y1 + " L" + x2 + " " + y2);
+
+        if (linecap)
+            element.setAttribute("stroke-linecap", linecap);
 
         return element;
     }

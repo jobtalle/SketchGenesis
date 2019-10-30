@@ -1,5 +1,5 @@
 :root {
-    --color-background: #111111;
+    --color-background: #13171a;
     --color-liquid: #a1a096;
     --color-core: #151515ff;
     --color-membrane-inner: #ffffff55;
@@ -10,10 +10,11 @@
     --color-membrane-outer-dead: #777777cc;
     --color-membrane-border-dead: #00000099;
     --color-liquid-particles: #4c753b;
-    --color-flare: #ffffca7f;
-    --color-dial-ring: #666f72;
-    --color-dial-ring-border: #4d5356;
-    --color-dial-tick: #afafaf;
+    --color-flare: #ffffff7f;
+    --color-dial-ring: #53595c;
+    --color-dial-ring-border: #393d40;
+    --color-dial-tick: #404548;
+    --color-dial-shade: #13171a;
 }
 
 body {
