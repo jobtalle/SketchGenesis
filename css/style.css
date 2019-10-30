@@ -27,3 +27,11 @@ body {
 #wrapper #centered {
     position: absolute;
 }
+
+#wrapper #centered svg {
+    position: absolute;
+    overflow: visible;
+    transform-origin: 0 0;
+    left: 50%;
+    top: calc(50% - 2px);
+}

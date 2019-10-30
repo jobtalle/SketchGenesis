@@ -5,6 +5,7 @@ const SIZE_FACTOR = 0.75;
 const wrapper = document.getElementById("wrapper");
 const centered = document.getElementById("centered");
 const canvas = document.getElementById("renderer");
+const dial = document.getElementById("dial");
 let myr = new Myr(canvas, false);
 let lastDate = new Date();
 let genesis = null;
@@ -18,10 +19,9 @@ const resize = () => {
 
     centered.style.left = Math.round(0.5 * (wrapper.offsetWidth - diameter)) + "px";
     centered.style.top = Math.round(0.5 * (wrapper.offsetHeight - diameter)) + "px";
-    canvas.width = radius + radius;
-    canvas.height = radius + radius;
+    canvas.width = canvas.height = diameter;
     myr = new Myr(canvas, false);
-    genesis = new Genesis(myr);
+    genesis = new Genesis(myr, dial);
 };
 
 const update = timeStep => {

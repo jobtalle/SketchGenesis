@@ -1,5 +1,5 @@
-const Genesis = function(myr) {
-    const lens = new Lens(myr, Math.floor(myr.getWidth() * 0.5));
+const Genesis = function(myr, elementDial) {
+    const lens = new Lens(myr, Math.floor(myr.getWidth() * 0.5), elementDial);
 
     this.update = timeStep => {
         lens.update(timeStep);

@@ -1,4 +1,4 @@
-const LensMotion = function(size, padding, radius, resolution, transform, grid) {
+const LensMotion = function(size, padding, radius, resolution, transform, grid, dial) {
     const State = function(focus, zoom, angle) {
         this.focus = focus;
         this.zoom = zoom;
@@ -135,7 +135,6 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid) 
     this.getZoom = () => state.zoom;
 
     this.update = timeStep => {
-        console.log(state.zoom);
         state.apply(radius, transform);
 
         if ((operationDelay -= timeStep) < 0) {
@@ -154,6 +153,8 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid) 
             }
             else
                 operations[0].apply(stateBase, state, operationTime);
+
+            dial.setAngle(state.angle);
         }
     };
 };

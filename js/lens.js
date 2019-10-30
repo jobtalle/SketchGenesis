@@ -1,4 +1,4 @@
-const Lens = function(myr, radius) {
+const Lens = function(myr, radius, elementDial) {
     const areaSize = (radius + radius) * Lens.WORKING_AREA_MULTIPLIER + (Agent.RADIUS + Agent.MEMBRANE_OFFSET) * 2;
     const renderSize = (radius + radius) * Lens.RESOLUTION;
     const projectionPadding = Math.ceil((Agent.RADIUS + Agent.MEMBRANE_OFFSET) * LensMotion.ZOOM_MAX);
@@ -10,13 +10,15 @@ const Lens = function(myr, radius) {
     const x = Math.floor((myr.getWidth() - (radius + radius)) * 0.5);
     const y = Math.floor((myr.getHeight() - (radius + radius)) * 0.5);
     const transform = new Myr.Transform();
+    const dial = new Dial(elementDial, radius);
     const motion = new LensMotion(
         areaSize,
         Agent.RADIUS + Agent.MEMBRANE_OFFSET,
         radius,
         Lens.RESOLUTION,
         transform,
-        bodies.getGrid());
+        bodies.getGrid(),
+        dial);
 
     this.update = timeStep => {
         motion.update(timeStep);
