@@ -1,4 +1,5 @@
 const TIME_STEP_MAX = 0.1;
+const COLOR_CLEAR = StyleUtils.getColor("--color-background");
 
 const wrapper = document.getElementById("wrapper");
 const canvas = document.getElementById("renderer");
@@ -19,7 +20,7 @@ const resize = () => {
 const update = timeStep => {
     genesis.update(Math.min(timeStep, TIME_STEP_MAX));
 
-    myr.setClearColor(Myr.Color.BLACK);
+    myr.setClearColor(COLOR_CLEAR);
     myr.bind();
     myr.clear();
 

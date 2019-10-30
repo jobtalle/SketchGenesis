@@ -5,6 +5,7 @@ const Lens = function(myr, radius) {
     const bodies = new Bodies(myr, renderSize, renderSize, Lens.RESOLUTION, projectionPadding, areaSize, areaSize);
     const surface = new myr.Surface(renderSize, renderSize, 0, true, false);
     const displacement = Lens.makeDisplacement(myr, radius + radius);
+    const overlay = Lens.makeOverlay(myr, radius + radius);
     const shader = Lens.makeShader(myr, surface, displacement, radius + radius);
     const x = Math.floor((myr.getWidth() - (radius + radius)) * 0.5);
     const y = Math.floor((myr.getHeight() - (radius + radius)) * 0.5);
@@ -23,12 +24,11 @@ const Lens = function(myr, radius) {
 
         surface.bind();
         bodies.draw(motion.getZoom());
-
-        //myr.primitives.drawCircle(Myr.Color.RED, radius, radius, radius);
     };
 
     this.draw = () => {
         shader.draw(x, y);
+        overlay.draw(x, y);
     };
 
     this.free = () => {
@@ -45,22 +45,22 @@ Lens.makeDisplacement = (myr, diameter) => {
     const powerCompensation = 1 / (1 - Lens.CUTOFF);
     const shader = new myr.Shader(
         "void main() {" +
-            "mediump float dx = uv.x - 0.5;" +
-            "mediump float dy = uv.y - 0.5;" +
-            "mediump float distSquared = dx * dx + dy * dy;" +
+            "const lowp float cutoff = " + Lens.CUTOFF.toFixed(2) + ";" +
+            "lowp float dx = uv.x - 0.5;" +
+            "lowp float dy = uv.y - 0.5;" +
+            "lowp float distSquared = dx * dx + dy * dy;" +
             "if (distSquared> 0.25)" +
                 "color = vec4(0);" +
             "else {" +
-                "mediump float dist = sqrt(distSquared) * 2.0;" +
-                "mediump float cutoff = " + Lens.CUTOFF + ";" +
+                "lowp float dist = sqrt(distSquared) * 2.0;" +
                 "if (dist < cutoff)" +
                     "color = vec4(" +
                         "0.5 + dx * " + cutoffCompensation + "," +
                         "0.5 + dy * " + cutoffCompensation + "," +
                         "0, 1);" +
                 "else {" +
-                    "mediump float factor = " + Lens.CUTOFF + " + (dist - " + Lens.CUTOFF + " + " +
-                        powerCompensation + " * (dist - " + Lens.CUTOFF + ") * (dist - " + Lens.CUTOFF + "));" +
+                    "lowp float factor = cutoff + (dist - cutoff) + " +
+                        powerCompensation + " * (dist - cutoff) * (dist - cutoff);" +
                     "color = vec4(" +
                         "0.5 + dx * " + cutoffCompensation + " * factor / dist," +
                         "0.5 + dy * " + cutoffCompensation + " * factor / dist," +
@@ -75,8 +75,48 @@ Lens.makeDisplacement = (myr, diameter) => {
 
     shader.setSize(diameter, diameter);
     shader.draw(0, 0);
+    shader.free();
 
-    myr.bind();
+    return surface;
+};
+
+Lens.makeOverlay = (myr, diameter) => {
+    const surface = new myr.Surface(diameter, diameter);
+    const shader = new myr.Shader(
+        "void main() {" +
+            "const lowp float cutoff = " + Lens.CUTOFF.toFixed(2) + ";" +
+            "const lowp vec4 backgroundColor = " + GLSLUtils.colorToVec4(Lens.COLOR_BACKGROUND) + ";" +
+            "const lowp float flareThreshold = " + Lens.FLARE_THRESHOLD.toFixed(2) + ";" +
+            "const lowp float flarePower = " + Lens.FLARE_POWER.toFixed(2) + ";" +
+            "const lowp vec4 flareColor = " + GLSLUtils.colorToVec4(Lens.FLARE_COLOR) + ";" +
+            "const lowp float borderPower = " + Lens.BORDER_POWER.toFixed(2) + ";" +
+            "const lowp float borderInfluence = " + Lens.BORDER_INFLUENCE.toFixed(2) + ";" +
+            "lowp vec3 light = normalize(vec3(-0.3, 0.3, -0.5));" +
+            "lowp vec2 xy = 2.0 * (uv - 0.5);" +
+            "lowp float radius = length(xy);" +
+            "lowp vec3 n = normalize(vec3(xy, sqrt(1.0 - dot(xy, xy)) * " +
+                Lens.FLATNESS.toFixed(2) + "));" +
+            "lowp float dotLight = dot(light, -n);" +
+            "color = vec4(0);" +
+            "if (radius > cutoff) {" +
+                "if (radius > 1.0)" +
+                    "color = vec4(0);" +
+                "else {" +
+                    "lowp float cutoffFactor = (1.0 / (1.0 - cutoff)) * (radius - cutoff);" +
+                    "color = vec4(backgroundColor.rgb, pow(cutoffFactor, borderPower) * borderInfluence);" +
+                "}" +
+            "}" +
+            "if (dotLight > flareThreshold) {" +
+                "lowp float flareFactor =  (1.0 / (1.0 - flareThreshold)) * (dotLight - flareThreshold);" +
+                "color = mix(color, flareColor, pow(flareFactor, flarePower));" +
+            "}" +
+        "}",
+        [],
+        []);
+
+    surface.bind();
+    shader.setSize(diameter, diameter);
+    shader.draw(0, 0);
     shader.free();
 
     return surface;
@@ -85,8 +125,8 @@ Lens.makeDisplacement = (myr, diameter) => {
 Lens.makeShader = (myr, surface, displacement) => {
     const shader = new myr.Shader(
         "void main() {" +
-            "highp vec4 sourceUV = texture(displacement, uv);" +
-            "mediump vec4 sourcePixel = texture(source, sourceUV.rg);" +
+            "mediump vec4 sourceUV = texture(displacement, uv);" +
+            "lowp vec4 sourcePixel = texture(source, sourceUV.rg);" +
             "color = vec4(sourcePixel.rgb, sourcePixel.a * sourceUV.a);" +
         "}",
         [
@@ -105,5 +145,12 @@ Lens.makeShader = (myr, surface, displacement) => {
 };
 
 Lens.RESOLUTION = 0.65;
-Lens.CUTOFF = 0.9;
+Lens.CUTOFF = 0.8;
 Lens.WORKING_AREA_MULTIPLIER = 2;
+Lens.COLOR_BACKGROUND = StyleUtils.getColor("--color-background");
+Lens.FLATNESS = 1;
+Lens.FLARE_THRESHOLD = 0.5;
+Lens.FLARE_POWER = 6;
+Lens.FLARE_COLOR = StyleUtils.getColor("--color-flare");
+Lens.BORDER_POWER = 2;
+Lens.BORDER_INFLUENCE = 0.9;

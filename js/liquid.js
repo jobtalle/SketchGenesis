@@ -55,7 +55,7 @@ const Liquid = function(myr, width, height, grid) {
     surface.setClearColor(Liquid.CLEAR_COLOR);
 };
 
-Liquid.CLEAR_COLOR = StyleUtils.getColor("--color-background");
+Liquid.CLEAR_COLOR = StyleUtils.getColor("--color-liquid");
 Liquid.PARTICLE_LIFE_MIN = 2;
 Liquid.PARTICLE_LIFE_MAX = 4;
 Liquid.VELOCITY_MULTIPLIER = 0.003;

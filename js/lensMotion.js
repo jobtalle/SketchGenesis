@@ -69,7 +69,7 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid) 
     };
 
     Operation.TRANSLATE_SPEED = 500;
-    Operation.ROTATE_SPEED = 2;
+    Operation.ROTATE_SPEED = 1.3;
     Operation.ZOOM_SPEED = 1;
 
     const operations = [];
@@ -135,6 +135,7 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid) 
     this.getZoom = () => state.zoom;
 
     this.update = timeStep => {
+        console.log(state.zoom);
         state.apply(radius, transform);
 
         if ((operationDelay -= timeStep) < 0) {

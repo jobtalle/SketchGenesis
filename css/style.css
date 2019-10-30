@@ -1,5 +1,6 @@
 :root {
-    --color-background: #ad9d81ff;
+    --color-background: #111111;
+    --color-liquid: #adaca1;
     --color-core: #151515ff;
     --color-membrane-inner: #ffffff55;
     --color-membrane-outer: #568543dd;
@@ -9,6 +10,7 @@
     --color-membrane-outer-dead: #777777cc;
     --color-membrane-border-dead: #00000099;
     --color-liquid-particles: #4c753b;
+    --color-flare: #ffffca7f;
 }
 
 body {
@@ -18,7 +20,6 @@ body {
 #wrapper {
     width: 100vw;
     height: 100vh;
-    background-color: #000000;
     overflow: hidden;
 }
 
