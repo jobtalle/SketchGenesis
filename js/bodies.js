@@ -1,6 +1,6 @@
 const Bodies = function(myr, width, height, resolution, padding, workingWidth, workingHeight) {
     const ramp = Bodies.makeRamp(myr);
-    const voronoi = new Voronoi(myr, width, height, padding);
+    const voronoi = new Voronoi(myr, width, height, padding * resolution);
     const shader = Bodies.makeShader(myr, width, height, ramp);
     const grid = new Grid(workingWidth, workingHeight);
     const liquid = new Liquid(myr, width, height, grid);

@@ -104,6 +104,6 @@ Lens.makeShader = (myr, surface, displacement) => {
     return shader;
 };
 
-Lens.RESOLUTION = 0.2;
+Lens.RESOLUTION = 0.65;
 Lens.CUTOFF = 0.9;
 Lens.WORKING_AREA_MULTIPLIER = 2;
