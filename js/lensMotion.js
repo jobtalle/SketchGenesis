@@ -1,10 +1,11 @@
-const LensMotion = function(size, padding, radius, transform, grid) {
+const LensMotion = function(size, padding, radius, resolution, transform, grid) {
     const State = function(focus, zoom, angle) {
         this.focus = focus;
         this.zoom = zoom;
         this.angle = angle;
         this.apply = (radius, transform) => {
             transform.identity();
+            transform.scale(resolution, resolution);
             transform.translate(radius, radius);
             transform.scale(this.zoom, this.zoom);
             transform.rotate(this.angle);
@@ -87,7 +88,6 @@ const LensMotion = function(size, padding, radius, transform, grid) {
             zoomDelta = -zoomDelta;
 
         const focusPadding = padding + radius / (stateBase.zoom + zoomDelta);
-        const focusLimit = LensMotion.FOCUS_DELTA_MAX / (stateBase.zoom + zoomDelta);
         const centroids = grid.getCentroids();
         let focusX, focusY;
 
@@ -112,12 +112,6 @@ const LensMotion = function(size, padding, radius, transform, grid) {
 
         focusDelta.x = focusX - stateBase.focus.x;
         focusDelta.y = focusY - stateBase.focus.y;
-
-        // TODO: Enforce this again:
-        /*
-        if (focusDelta.length() > focusLimit)
-            focusDelta.multiply(focusLimit / focusDelta.length());
-         */
 
         if (zoomDelta < 0) {
             operations.push(new Operation.Focus(focusDelta));

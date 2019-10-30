@@ -1,4 +1,4 @@
-const Bodies = function(myr, width, height, padding, workingWidth, workingHeight) {
+const Bodies = function(myr, width, height, resolution, padding, workingWidth, workingHeight) {
     const ramp = Bodies.makeRamp(myr);
     const voronoi = new Voronoi(myr, width, height, padding);
     const shader = Bodies.makeShader(myr, width, height, ramp);
@@ -12,8 +12,6 @@ const Bodies = function(myr, width, height, padding, workingWidth, workingHeight
     };
 
     const findSpawnLocation = transform => {
-        grid.getCentroids(); // TODO: Debug
-
         const radius = Math.max(width, height) * 0.5 + padding;
         const vector = new Myr.Vector(0, 0);
         const transformed = new Myr.Vector(0, 0);
@@ -65,7 +63,7 @@ const Bodies = function(myr, width, height, padding, workingWidth, workingHeight
     this.draw = zoom => {
         liquid.draw();
         shader.setSurface("source", voronoi.getSurface());
-        shader.setVariable("zoom", zoom);
+        shader.setVariable("zoom", zoom * resolution);
         shader.draw(-voronoi.getMaxDistance(), -voronoi.getMaxDistance());
     };
 

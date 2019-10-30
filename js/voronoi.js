@@ -84,13 +84,13 @@ const Voronoi = function(myr, width, height, maxDistance) {
 Voronoi.makeShader = (myr, width, height) => {
     return new myr.Shader(
         "void main() {" +
-            "const mediump vec2 size = vec2(" + width + ", " + height + ");" +
-            "mediump float bestDistance = 10000.0;" +
+            "const lowp vec2 size = vec2(" + width + ", " + height + ");" +
+            "lowp float bestDistance = 10000.0;" +
             "lowp vec4 bestSample = vec4(0);" +
             "for (int y = -1; y < 2; ++y) {" +
                 "for (int x = -1; x < 2; ++x) {" +
                     "lowp vec4 pixel = texture(source, uv + vec2(x, y) * step * pixelSize);" +
-                    "mediump float distance = length((pixel.xy - uv) * size);" +
+                    "lowp float distance = length((pixel.xy - uv) * size);" +
                     "if (pixel.a != 0.0 && distance < bestDistance) {" +
                         "bestDistance = distance;" +
                         "bestSample = pixel;" +
