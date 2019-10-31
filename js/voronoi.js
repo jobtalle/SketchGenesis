@@ -77,8 +77,6 @@ const Voronoi = function(myr, width, height, maxDistance) {
         while (maxStep < width || maxStep < height)
             maxStep <<= 1;
     }
-
-    maxStep >>= 1;
 };
 
 Voronoi.makeShader = (myr, width, height) => {
