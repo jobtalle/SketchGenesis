@@ -152,7 +152,7 @@ Bodies.makeShader = (myr, width, height, ramp) => {
 Bodies.SPAWN_ATTEMPTS = 10;
 Bodies.RAMP_SIZE_U = 128;
 Bodies.RAMP_SIZE_V = 32;
-Bodies.SPAWN_TIME = 2;
+Bodies.SPAWN_TIME = 3;
 Bodies.RADIUS_CORE = 2;
 Bodies.RADIUS_BORDER = 2.5;
 Bodies.COLOR_CORE = StyleUtils.getColor("--color-core");
