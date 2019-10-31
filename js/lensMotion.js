@@ -83,7 +83,9 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid, 
         const focusDelta = new Myr.Vector(0, 0);
         let zoomDelta = LensMotion.ZOOM_DELTA_MIN + (LensMotion.ZOOM_DELTA_MAX - LensMotion.ZOOM_DELTA_MIN) * Math.random();
 
-        if (stateBase.zoom + zoomDelta < LensMotion.ZOOM_MIN ||
+        if (Math.abs(zoomDelta) < LensMotion.ZOOM_THRESHOLD)
+            zoomDelta = 0;
+        else if (stateBase.zoom + zoomDelta < LensMotion.ZOOM_MIN ||
             stateBase.zoom + zoomDelta > LensMotion.ZOOM_MAX)
             zoomDelta = -zoomDelta;
 
@@ -113,16 +115,32 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid, 
         focusDelta.x = focusX - stateBase.focus.x;
         focusDelta.y = focusY - stateBase.focus.y;
 
+        let opZoom = null;
+        let opFocus = null;
+
+        if (zoomDelta !== 0)
+            opZoom = new Operation.Zoom(zoomDelta);
+
+        if (focusDelta.length() > LensMotion.FOCUS_THRESHOLD)
+            opFocus = new Operation.Focus(focusDelta);
+
         if (zoomDelta < 0) {
-            operations.push(new Operation.Focus(focusDelta));
-            operations.push(new Operation.Zoom(zoomDelta));
+            if (opFocus)
+                operations.push(new Operation.Focus(focusDelta));
+
+            if (opZoom)
+                operations.push(opZoom);
         }
         else {
-            operations.push(new Operation.Zoom(zoomDelta));
-            operations.push(new Operation.Focus(focusDelta));
+            if (opZoom)
+                operations.push(opZoom);
+
+            if (opFocus)
+                operations.push(new Operation.Focus(focusDelta));
         }
 
-        operations.push(new Operation.Rotate(angleDelta));
+        if (Math.abs(angleDelta) > LensMotion.ANGLE_THRESHOLD)
+            operations.push(new Operation.Rotate(angleDelta));
     };
 
     const addOperations = () => {
@@ -160,13 +178,16 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid, 
     };
 };
 
-LensMotion.ZOOM_TO_ANGLE = 2;
+LensMotion.ZOOM_TO_ANGLE = 1.2;
 LensMotion.ZOOM_MIN = 0.75;
 LensMotion.ZOOM_MAX = 1.5;
+LensMotion.ZOOM_THRESHOLD = 0.15;
 LensMotion.ZOOM_DELTA_MIN = (LensMotion.ZOOM_MAX - LensMotion.ZOOM_MIN) * -0.5;
 LensMotion.ZOOM_DELTA_MAX = -LensMotion.ZOOM_DELTA_MIN;
 LensMotion.ANGLE_DELTA_MIN = -1.3;
 LensMotion.ANGLE_DELTA_MAX = 1.3;
+LensMotion.ANGLE_THRESHOLD = 0.2;
+LensMotion.FOCUS_THRESHOLD = 60;
 LensMotion.OPERATION_DELAY_INITIAL = 1;
 LensMotion.OPERATION_DELAY_MIN = 3;
 LensMotion.OPERATION_DELAY_MAX = 10;
