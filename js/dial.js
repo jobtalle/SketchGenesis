@@ -1,6 +1,5 @@
-const Dial = function(element, radius) {
+const Dial = function(element, radius, thickness, innerShade) {
     const build = () => {
-        const thickness = radius * Dial.RING_THICKNESS;
         const circumference = Math.PI * 2 * radius;
         const ticks = Math.ceil(circumference / Dial.TICK_SPACING);
 
@@ -29,12 +28,13 @@ const Dial = function(element, radius) {
                 "round"));
         }
 
-        element.appendChild(SVGUtils.drawCircle(
-            0,
-            0,
-            radius + Dial.SHADE_THICKNESS * 0.5,
-            Dial.SHADE_THICKNESS,
-            Dial.SHADE_COLOR));
+        if (innerShade)
+            element.appendChild(SVGUtils.drawCircle(
+                0,
+                0,
+                radius + Dial.SHADE_THICKNESS * 0.5,
+                Dial.SHADE_THICKNESS,
+                Dial.SHADE_COLOR));
         element.appendChild(SVGUtils.drawCircle(
             0,
             0,
@@ -42,6 +42,8 @@ const Dial = function(element, radius) {
             Dial.BORDER_THICKNESS,
             Dial.BORDER_COLOR));
     };
+
+    this.getSize = () => radius * Dial.RING_THICKNESS + Dial.BORDER_THICKNESS;
 
     this.setAngle = angle => {
         element.style.transform = "rotate(" + angle + "rad)";

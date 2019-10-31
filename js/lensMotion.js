@@ -1,4 +1,4 @@
-const LensMotion = function(size, padding, radius, resolution, transform, grid, dial) {
+const LensMotion = function(size, padding, radius, resolution, transform, grid, dialAngle, dialZoom) {
     const State = function(focus, zoom, angle) {
         this.focus = focus;
         this.zoom = zoom;
@@ -70,7 +70,7 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid, 
 
     Operation.TRANSLATE_SPEED = 450;
     Operation.ROTATE_SPEED = 1.1;
-    Operation.ZOOM_SPEED = 1;
+    Operation.ZOOM_SPEED = 0.7;
 
     const operations = [];
     const stateBase = new State(new Myr.Vector(size * 0.5, size * 0.5), 1, 0);
@@ -154,11 +154,13 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid, 
             else
                 operations[0].apply(stateBase, state, operationTime);
 
-            dial.setAngle(state.angle);
+            dialAngle.setAngle(state.angle);
+            dialZoom.setAngle(state.zoom * LensMotion.ZOOM_TO_ANGLE);
         }
     };
 };
 
+LensMotion.ZOOM_TO_ANGLE = 2;
 LensMotion.ZOOM_MIN = 0.75;
 LensMotion.ZOOM_MAX = 1.5;
 LensMotion.ZOOM_DELTA_MIN = (LensMotion.ZOOM_MAX - LensMotion.ZOOM_MIN) * -0.5;

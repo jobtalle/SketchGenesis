@@ -124,9 +124,9 @@ Bodies.makeShader = (myr, width, height, ramp) => {
             "mediump float distance = length((sourcePixel.rg - uv) * size);" +
             "if (distance < radius) {" +
                 "lowp float u;" +
-                "if (texture(source, uv - pixelSize).rg != sourcePixel.rg ||" +
-                "    texture(source, uv + pixelSize).rg != sourcePixel.rg ||" +
+                "if (texture(source, uv + pixelSize * vec2(-1, -1)).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(1, -1)).rg != sourcePixel.rg ||" +
+                "    texture(source, uv + pixelSize * vec2(1, 1)).rg != sourcePixel.rg ||" +
                 "    texture(source, uv + pixelSize * vec2(-1, 1)).rg != sourcePixel.rg)" +
                     "u = 1.0;" +
                 "else " +

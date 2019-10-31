@@ -1,4 +1,4 @@
-const Lens = function(myr, radius, elementDial) {
+const Lens = function(myr, radius, elementDialAngle, elementDialZoom) {
     const areaSize = (radius + radius) * Lens.WORKING_AREA_MULTIPLIER + (Agent.RADIUS + Agent.MEMBRANE_OFFSET) * 2;
     const renderSize = (radius + radius) * Lens.RESOLUTION;
     const projectionPadding = Math.ceil((Agent.RADIUS + Agent.MEMBRANE_OFFSET) * LensMotion.ZOOM_MAX);
@@ -10,7 +10,16 @@ const Lens = function(myr, radius, elementDial) {
     const x = Math.floor((myr.getWidth() - (radius + radius)) * 0.5);
     const y = Math.floor((myr.getHeight() - (radius + radius)) * 0.5);
     const transform = new Myr.Transform();
-    const dial = new Dial(elementDial, radius);
+    const dialAngle = new Dial(
+        elementDialAngle,
+        radius,
+        Math.ceil(Lens.DIAL_THICKNESS * radius),
+        true);
+    const dialZoom = new Dial(
+        elementDialZoom,
+        radius + dialAngle.getSize() - 1,
+        Math.ceil(Lens.DIAL_THICKNESS * radius),
+        false);
     const motion = new LensMotion(
         areaSize,
         Agent.RADIUS + Agent.MEMBRANE_OFFSET,
@@ -18,7 +27,8 @@ const Lens = function(myr, radius, elementDial) {
         Lens.RESOLUTION,
         transform,
         bodies.getGrid(),
-        dial);
+        dialAngle,
+        dialZoom);
 
     this.update = timeStep => {
         motion.update(timeStep);
@@ -146,7 +156,8 @@ Lens.makeShader = (myr, surface, displacement) => {
     return shader;
 };
 
-Lens.RESOLUTION = 0.65;
+Lens.DIAL_THICKNESS = 0.12;
+Lens.RESOLUTION = 0.7;
 Lens.CUTOFF = 0.85;
 Lens.WORKING_AREA_MULTIPLIER = 2;
 Lens.COLOR_BACKGROUND = StyleUtils.getColor("--color-background");
