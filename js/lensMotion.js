@@ -161,8 +161,8 @@ const LensMotion = function(size, padding, radius, resolution, transform, grid, 
 
 LensMotion.ZOOM_MIN = 0.75;
 LensMotion.ZOOM_MAX = 1.5;
-LensMotion.ZOOM_DELTA_MIN = -0.5;
-LensMotion.ZOOM_DELTA_MAX = 0.5;
+LensMotion.ZOOM_DELTA_MIN = (LensMotion.ZOOM_MAX - LensMotion.ZOOM_MIN) * -0.5;
+LensMotion.ZOOM_DELTA_MAX = -LensMotion.ZOOM_DELTA_MIN;
 LensMotion.ANGLE_DELTA_MIN = -1.3;
 LensMotion.ANGLE_DELTA_MAX = 1.3;
 LensMotion.OPERATION_DELAY_INITIAL = 1;
