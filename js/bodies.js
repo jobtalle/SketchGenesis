@@ -7,6 +7,15 @@ const Bodies = function(myr, width, height, resolution, padding, workingWidth, w
     const agents = [];
     let spawnTime = 0;
 
+    const initialize = () => {
+        const agentCount = Math.ceil(Bodies.INITIAL_AGENTS_PER_PIXEL * workingWidth * workingHeight);
+
+        for (let i = 0; i < agentCount; ++i)
+            spawn(new Agent(new Myr.Vector(workingWidth * Math.random(), workingHeight * Math.random())));
+
+        spawn(new Agent(new Myr.Vector(workingWidth * 0.5, workingHeight * 0.5)));
+    };
+
     const spawn = agent => {
         agents.push(agent);
     };
@@ -74,7 +83,7 @@ const Bodies = function(myr, width, height, resolution, padding, workingWidth, w
         liquid.free();
     };
 
-    spawn(new Agent(new Myr.Vector(workingWidth * 0.5, workingHeight * 0.5)));
+    initialize();
 };
 
 Bodies.makeRamp = myr => {
@@ -149,6 +158,7 @@ Bodies.makeShader = (myr, width, height, ramp) => {
     return shader;
 };
 
+Bodies.INITIAL_AGENTS_PER_PIXEL = 1 / 300000;
 Bodies.SPAWN_ATTEMPTS = 10;
 Bodies.RAMP_SIZE_U = 128;
 Bodies.RAMP_SIZE_V = 32;

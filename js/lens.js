@@ -156,6 +156,7 @@ Lens.makeShader = (myr, surface, displacement) => {
     return shader;
 };
 
+Lens.DARKEN_EDGE = 0.5;
 Lens.DIAL_THICKNESS = 0.12;
 Lens.RESOLUTION = 0.7;
 Lens.CUTOFF = 0.85;

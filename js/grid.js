@@ -160,5 +160,5 @@ const Grid = function(width, height) {
 
 Grid.RESOLUTION = Agent.RADIUS * 2;
 Grid.RESOLUTION_INVERSE = 1 / Grid.RESOLUTION;
-Grid.CENTROID_SPACING = 300;
+Grid.CENTROID_SPACING = 200;
 Grid.CENTROID_POWER = 1.3;
